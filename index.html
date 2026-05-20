@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9, minimum-scale=0.9, user-scalable=no, viewport-fit=cover">
+    <title>ГЕНИЙ ГЕНЕРАТОРА ГЕЙМ</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap');
+
+        :root {
+            --bg-color: #0f0c1b;
+            --card-bg: rgba(29, 24, 51, 0.9);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; font-family: 'Comic Neue', cursive, sans-serif; }
+		
+		html, body {
+			touch-action: none; /* Блокируем системные жесты (двойной тап для зума, свайпы) */
+			overscroll-behavior: none; /* Убираем "резинку" при оттягивании краев */
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+		}
+		
+        body {
+            background: linear-gradient(45deg, #1a0033 0%, #001133 50%, #33001a 100%);
+            background-size: 400% 400%; animation: gradientBG 15s ease infinite; color: #fff;
+            overflow: hidden; height: 100dvh; display: flex; flex-direction: column; justify-content: space-between; padding: 15px;
+        }
+
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .hidden { display: none !important; }
+
+        /* Фон */
+        #bg-animations { position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1; overflow: hidden; pointer-events: none; }
+        .bg-item { position: absolute; font-size: 30px; opacity: 0.15; animation: floatBackground linear infinite; }
+        @keyframes floatBackground { from { transform: translateY(110dvh) rotate(0deg); } to { transform: translateY(-10dvh) rotate(360deg); } }
+
+        /* Лоадер */
+        #loading-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0b071e; z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px;
+        }
+        .loader-title { font-family: Impact, sans-serif; font-size: 36px; color: #ffff00; text-shadow: 3px 3px 0 red, -2px -2px 0 blue; margin-bottom: 10px; text-transform: uppercase; text-align: center; animation: shake 0.5s infinite; }
+        .progress-container { width: 80%; max-width: 300px; height: 20px; background: #1d1833; border: 3px solid #00ffff; border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
+        .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #ff00ff, #00ffff); }
+        .start-btn { display: none; padding: 15px 40px; font-size: 22px; background: #ff00ff; color: white; border: 4px solid #00ffff; border-radius: 20px; cursor: pointer; text-transform: uppercase; font-weight: bold; box-shadow: 0 0 25px #ff00ff; animation: pulse 1s infinite; }
+
+        /* Шапка профиля */
+        .header { width: 100%; background: var(--card-bg); padding: 10px 15px; border-radius: 16px; border: 2px dashed #00ffff; z-index: 10; flex-shrink: 0; }
+        .profile-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;}
+        .user-info { display: flex; align-items: center; gap: 10px; }
+        .avatar { width: 40px; height: 40px; background: linear-gradient(45deg, yellow, red); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+        .pnl { font-size: 14px; color: #00ff00; font-weight: bold; text-shadow: 0 0 5px #00ff00; }
+        
+        .xp-container { width: 100%; height: 12px; background: #140f26; border-radius: 6px; overflow: hidden; border: 1px solid #44357a; }
+        .xp-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #00ffff, #00ff00); transition: width 0.3s ease; }
+        .xp-text { font-size: 10px; color: #aaa; text-align: right; margin-top: 2px; }
+
+        /* Баланс */
+        .stats-container { text-align: center; margin: 10px 0; z-index: 10; flex-shrink: 0; }
+        .balance { font-family: Impact, sans-serif; font-size: 46px; color: #ffff00; text-shadow: 3px 3px 0 #ff00ff, -2px -2px 0 #00ffff; display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+        .back-nav { width: 100%; display: flex; justify-content: flex-start; z-index: 10; margin-bottom: 10px; }
+        .back-btn { padding: 8px 20px; background: #330066; border: 2px solid #ff00ff; color: #fff; border-radius: 10px; cursor: pointer; font-size: 14px; text-transform: uppercase; }
+
+        /* Кликер */
+        #clicker-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; flex: 1; z-index: 10; min-height: 0;}
+        
+        /* ДИНАМИЧЕСКИЕ СТИЛИ МОНЕТЫ */
+        .circle-outer { width: 230px; height: 230px; border-radius: 50%; display: flex; align-items: center; justify-content: center; animation: breathe 3s ease-in-out infinite; transition: 0.5s; }
+        .click-btn { width: 190px; height: 190px; border-radius: 50%; cursor: pointer; position: relative; display: flex; align-items: center; justify-content: center; will-change: transform; transition: transform 0.05s ease-out, box-shadow 0.5s, background 0.5s; border: 8px solid transparent; }
+        .click-btn.active { transform: scale(0.92) rotate(3deg); filter: brightness(1.3); }
+        .meme-pic { font-size: 80px; position: relative; display: flex; align-items: center; justify-content: center; }
+        .troll-face { position: absolute; font-size: 40px; bottom: 5px; right: 5px; transform: rotate(25deg); }
+
+        /* Меню на 3 кнопки */
+        .main-menu-grid { width: 100%; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 15px; z-index: 10; }
+        .menu-btn { padding: 12px 5px; background: linear-gradient(135deg, #ff00ff, #330066); border: 2px solid #00ffff; border-radius: 12px; color: #fff; font-size: 13px; font-family: Impact, sans-serif; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 0 #00ffff; text-align: center; }
+        .menu-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #00ffff; }
+
+        /* Экраны контента */
+        .content-screen { width: 100%; background: var(--card-bg); border-radius: 20px; padding: 15px; border: 3px solid #ff00ff; height: 65dvh; overflow-y: auto; z-index: 10; display: flex; flex-direction: column; }
+        .screen-title { font-family: Impact, sans-serif; font-size: 24px; color: #00ffff; text-align: center; text-shadow: 2px 2px 0 #ff00ff; margin-bottom: 15px; text-transform: uppercase; }
+        
+        .upgrades-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .card { background: linear-gradient(135deg, #330066, #000033); border: 2px solid #00ffff; border-radius: 12px; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; gap: 4px; cursor: pointer; box-shadow: 0 4px 0 #ff00ff; }
+        .card:active { transform: translateY(3px); box-shadow: 0 1px 0 #ff00ff; }
+        .card-name { font-size: 13px; font-weight: bold; color: #fff; }
+        .card-info { font-size: 11px; color: #ccc; }
+        .card-price { font-size: 14px; color: #ffff00; font-weight: bold; font-family: Impact, sans-serif;}
+
+        /* Задания */
+        .tasks-list { display: flex; flex-direction: column; gap: 10px; }
+        .task-item { background: #1a153a; border: 2px solid #44357a; border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .task-details { display: flex; flex-direction: column; gap: 2px; }
+        .task-name { font-size: 13px; font-weight: bold; color: #00ffff;}
+        .task-reward { font-size: 12px; color: #ffff00; font-weight: bold;}
+        .task-btn { padding: 6px 10px; background: #00ff00; border: none; color: #000; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 11px; text-transform: uppercase; }
+        .task-btn:disabled { background: #555; color: #aaa; cursor: not-allowed; }
+
+        /* Кейсы */
+        .case-block { display: flex; flex-direction: column; align-items: center; gap: 15px; padding: 20px; background: #1a153a; border-radius: 16px; border: 3px dashed #ffff00; }
+        .case-icon { font-size: 80px; animation: breathe 2s infinite; }
+        .case-btn { padding: 15px 30px; font-size: 18px; font-weight: bold; background: #ff00ff; border: 3px solid #fff; border-radius: 15px; color: #fff; cursor: pointer; }
+
+        /* Модальные окна */
+        #modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s; }
+        #modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal-box { background: linear-gradient(135deg, #330066, #ff00ff); border: 4px solid #00ffff; border-radius: 20px; padding: 25px; text-align: center; transform: scale(0.8); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-width: 90%; }
+        #modal-overlay.active .modal-box { transform: scale(1); }
+        .modal-title { font-family: Impact, sans-serif; font-size: 26px; color: #ffff00; text-shadow: 2px 2px 0 #000; margin-bottom: 10px; text-transform: uppercase;}
+        .modal-desc { font-size: 16px; margin-bottom: 20px; font-weight: bold;}
+        .modal-btn { padding: 10px 30px; font-size: 16px; font-weight: bold; background: #00ffff; color: #000; border: none; border-radius: 10px; cursor: pointer; text-transform: uppercase; }
+
+        /* Текст клика */
+        .floating-text { position: absolute; font-family: Impact, sans-serif; font-size: 34px; pointer-events: none; animation: floatUpMeme 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; z-index: 100; }
+        @keyframes floatUpMeme { 0% { transform: translateY(0) scale(0.6) rotate(-10deg); opacity: 1; } 50% { transform: translateY(-70px) scale(1.4) rotate(10deg); opacity: 1; } 100% { transform: translateY(-130px) scale(1) rotate(0deg); opacity: 0; } }
+
+        @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        @keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 10% { transform: translate(-1px, -1px) rotate(-1deg); } 100% { transform: translate(0px, 0px) rotate(0deg); } }
+    </style>
+</head>
+<body>
+
+    <div id="loading-screen">
+        <div class="loader-title">ЗАГРУЗКА ИНФИНИТИ...</div>
+        <div class="progress-container"><div class="progress-bar" id="progress-bar"></div></div>
+        <div style="font-size: 14px; color: #aaa; margin-bottom: 20px;" id="loader-status">Качаем меллстроя: 0%</div>
+        <button class="start-btn" id="start-btn" onclick="startGame()">ВОРВАТЬСЯ</button>
+    </div>
+
+    <div id="bg-animations"></div>
+
+    <div id="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-title" id="modal-title">ТИТЛ</div>
+            <div class="modal-desc" id="modal-desc">ОПИСАНИЕ</div>
+            <button class="modal-btn" onclick="closeModal()">ОКЕЙ</button>
+        </div>
+    </div>
+
+    <div class="header">
+        <div class="profile-container">
+            <div class="user-info">
+                <div class="avatar" id="player-avatar">🥭</div>
+                <div>
+                    <div style="font-weight: bold; font-size: 15px; color:#fff" id="username">Игрок</div>
+                    <div style="font-size: 12px; color: #00ffff;" id="player-status">Ранг: Манго-Ньюб</div>
+                </div>
+            </div>
+            <div class="pnl">Пассив: +<span id="pwh-val">0</span>/с</div>
+        </div>
+        <div class="xp-container"><div class="xp-bar" id="xp-bar"></div></div>
+        <div class="xp-text">Ур. <span id="level-val">1</span> (<span id="xp-text-val">0/500</span> XP)</div>
+    </div>
+
+    <div class="stats-container">
+        <div class="balance">🥭 <span id="balance-val">0</span></div>
+    </div>
+
+    <div id="clicker-screen">
+        <div class="clicker-container">
+            <div class="circle-outer" id="coin-glow">
+                <div class="click-btn" id="tap-target">
+                    <div class="meme-pic" id="coin-emoji">🥭<div class="troll-face">😎</div></div>
+                </div>
+            </div>
+        </div>
+        <div class="main-menu-grid">
+            <button class="menu-btn" onclick="switchScreen('shop')">🏪 МАГАЗИН</button>
+            <button class="menu-btn" onclick="switchScreen('tasks')">📜 КВЕСТЫ</button>
+            <button class="menu-btn" onclick="switchScreen('cases')">📦 КЕЙСЫ <span id="cases-badge" style="color:#00ff00;">(0)</span></button>
+        </div>
+    </div>
+
+    <div id="shop-screen" class="hidden" style="width:100%;">
+        <div class="back-nav"><button class="back-btn" onclick="switchScreen('main')">⬅️ Назад</button></div>
+        <div class="content-screen">
+            <div class="screen-title">АПГРЕЙДЫ</div>
+            <div class="upgrades-grid">
+                <div class="card" onclick="buyUpgrade('click', 67, 1, 1.5)">
+                    <div><div class="card-name">⚡ Мощный Тап 67</div><div class="card-info">+1 к клику</div></div>
+                    <div class="card-price">🥭 <span id="cost-click">67</span></div>
+                </div>
+                <div class="card" onclick="buyUpgrade('passive1', 150, 2, 1.6)">
+                    <div><div class="card-name">🤖 Бот-Генератор</div><div class="card-info">+2/сек</div></div>
+                    <div class="card-price">🥭 <span id="cost-passive1">150</span></div>
+                </div>
+                <div class="card" onclick="buyUpgrade('passive2', 1000, 15, 1.7)">
+                    <div><div class="card-name">🥭 Манговая Ферма</div><div class="card-info">+15/сек</div></div>
+                    <div class="card-price">🥭 <span id="cost-passive2">1000</span></div>
+                </div>
+                <div class="card" onclick="buyUpgrade('passive3', 6767, 100, 2)">
+                    <div><div class="card-name">👁️ Секта 67</div><div class="card-info">+100/сек</div></div>
+                    <div class="card-price">🥭 <span id="cost-passive3">6767</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tasks-screen" class="hidden" style="width:100%;">
+        <div class="back-nav"><button class="back-btn" onclick="switchScreen('main')">⬅️ Назад</button></div>
+        <div class="content-screen">
+            <div class="screen-title">БЕСКОНЕЧНЫЕ КВЕСТЫ</div>
+            <div class="tasks-list" id="tasks-container">
+                </div>
+        </div>
+    </div>
+
+    <div id="cases-screen" class="hidden" style="width:100%;">
+        <div class="back-nav"><button class="back-btn" onclick="switchScreen('main')">⬅️ Назад</button></div>
+        <div class="content-screen">
+            <div class="screen-title">ЛУТБОКСЫ</div>
+            <div class="case-block">
+                <div class="case-icon">📦</div>
+                <div style="text-align:center; color:#ccc;">Тут падает опыт, манго или халявные апгрейды!</div>
+                <button class="case-btn" id="open-case-btn" onclick="openCase()">ОТКРЫТЬ КЕЙС</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let tgUsername = "Игрок";
+        const tg = window.Telegram?.WebApp;
+        if (tg) { 
+            tg.ready(); tg.expand(); 
+            if (tg.initDataUnsafe?.user) { tgUsername = tg.initDataUnsafe.user.username || tg.initDataUnsafe.user.first_name || "Игрок"; }
+        }
+        document.getElementById('username').innerText = tgUsername;
+
+        // Звуки
+        const soundUrls = {
+            tapProcess: 'https://www.myinstants.com/media/sounds/stranye-khlopki.mp3',
+            click: 'https://www.myinstants.com/media/sounds/6-77.mp3',
+            passive1: 'https://www.myinstants.com/media/sounds/starter-zavelsia-i-zaglokh.mp3',
+            passive2: 'https://www.myinstants.com/media/sounds/4092-mango-phonk.mp3',
+            passive3: 'https://www.myinstants.com/media/sounds/hey-67-kid.mp3',
+            taskDone: 'https://www.myinstants.com/media/sounds/skolko-nakh-i.mp3',
+            lvl1: 'https://www.myinstants.com/media/sounds/mellstroy-delaet-svistuliu.mp3',
+            lvl2: 'https://www.myinstants.com/media/sounds/mellstroy-smeiotsia.mp3',
+            lvl3: 'https://www.myinstants.com/media/sounds/melstroi-raduetsia.mp3',
+            lvl4: 'https://www.myinstants.com/media/sounds/slivyyy-melstroi.mp3'
+        };
+
+        const audioObjects = {};
+        let loadedSoundsCount = 0;
+        const totalSounds = Object.keys(soundUrls).length;
+
+        async function preloadSounds() {
+            for (const [key, url] of Object.entries(soundUrls)) {
+                try {
+                    const response = await fetch(url);
+                    const blob = await response.blob();
+                    const objectUrl = URL.createObjectURL(blob);
+                    const audio = new Audio(objectUrl);
+                    if (key === 'tapProcess') audio.loop = true;
+                    audioObjects[key] = audio;
+                    loadedSoundsCount++;
+                    let percent = Math.floor((loadedSoundsCount / totalSounds) * 100);
+                    document.getElementById('progress-bar').style.width = percent + '%';
+                    document.getElementById('loader-status').innerText = `Загрузка: ${percent}%`;
+                } catch (e) {
+                    audioObjects[key] = new Audio(url);
+                    if (key === 'tapProcess') audioObjects[key].loop = true;
+                }
+            }
+            document.getElementById('loader-status').style.display = 'none';
+            document.getElementById('start-btn').style.display = 'block';
+        }
+        preloadSounds();
+
+        function playMemeSound(key) {
+            if (audioObjects[key]) {
+                const clonedNode = audioObjects[key].cloneNode(true);
+                clonedNode.volume = 1.0;
+                clonedNode.play().catch(e => {});
+            }
+        }
+
+        // Конфиг мутации монеты (эмодзи и цвета меняются)
+        const coinEvolutions = [
+            { title: "Манго-Ньюб", emoji: "🥭", grad: "radial-gradient(circle, #ff9900, #ff0000)", glow: "rgba(255,0,255,0.3)", border: "#00ffff" },
+            { title: "Джус 67", emoji: "🧃", grad: "radial-gradient(circle, #00ff00, #006600)", glow: "rgba(0,255,0,0.4)", border: "#ffff00" },
+            { title: "Манго-Босс", emoji: "💼", grad: "radial-gradient(circle, #0000ff, #000066)", glow: "rgba(0,0,255,0.5)", border: "#ff00ff" },
+            { title: "Генератор", emoji: "👽", grad: "radial-gradient(circle, #ffff00, #999900)", glow: "rgba(255,255,0,0.5)", border: "#ff0000" },
+            { title: "Гений", emoji: "🔱", grad: "radial-gradient(circle, #ffffff, #666666)", glow: "rgba(255,255,255,0.6)", border: "#000000" }
+        ];
+
+        // Сохранение
+        let state = JSON.parse(localStorage.getItem('mango_infinity_state')) || {
+            balance: 0, clickPower: 1, passiveIncome: 0, lastSavedTime: 0,
+            level: 1, xp: 0, cases: 0,
+            stats: { taps: 0, casesOpened: 0, upgradesBought: 0 },
+            tasks: {
+                taps: { target: 1000, rewardType: 'coins', rewardVal: 500 },
+                cases: { target: 3, rewardType: 'xp', rewardVal: 1000 },
+                upgrades: { target: 5, rewardType: 'cases', rewardVal: 1 },
+                level: { target: 2, rewardType: 'cases', rewardVal: 2 }
+            },
+            costs: { click: 67, passive1: 150, passive2: 1000, passive3: 6767 }
+        };
+
+        let tapTimeout, lastTapTime = 0, comboCount = 0;
+
+        // Модалка
+        function showModal(title, desc) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-desc').innerText = desc;
+            document.getElementById('modal-overlay').classList.add('active');
+        }
+        function closeModal() { document.getElementById('modal-overlay').classList.remove('active'); }
+
+        // Хардкорная кривая опыта (начинается с 500, каждый лвл нужно * 1.5)
+        function getXpNeeded() { return Math.floor(500 * Math.pow(1.5, state.level - 1)); }
+
+        function checkLevelUp() {
+            let leveledUp = false;
+            let xpNeeded = getXpNeeded();
+            while (state.xp >= xpNeeded) {
+                state.xp -= xpNeeded;
+                state.level++;
+                leveledUp = true;
+                xpNeeded = getXpNeeded();
+            }
+            if (leveledUp) {
+                let rndSound = ['lvl1', 'lvl2', 'lvl3', 'lvl4'][Math.floor(Math.random()*4)];
+                playMemeSound(rndSound);
+                let evo = coinEvolutions[Math.min(state.level - 1, coinEvolutions.length - 1)];
+                showModal('НОВЫЙ УРОВЕНЬ!', `Ты теперь ${evo.title}!\nМонетка эволюционировала!`);
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            }
+            updateEvoUI();
+        }
+
+        function updateEvoUI() {
+            let evoIndex = Math.min(state.level - 1, coinEvolutions.length - 1);
+            let evo = coinEvolutions[evoIndex];
+
+            document.getElementById('level-val').innerText = state.level;
+            document.getElementById('player-status').innerText = `Ранг: ${evo.title}`;
+            document.getElementById('player-avatar').innerText = evo.emoji;
+            
+            // Мутация монеты (валюта остается манго, меняется только кликер)
+            document.getElementById('coin-emoji').innerHTML = `${evo.emoji}<div class="troll-face">😎</div>`;
+            document.getElementById('tap-target').style.background = evo.grad;
+            document.getElementById('tap-target').style.borderColor = evo.border;
+            document.getElementById('coin-glow').style.background = `radial-gradient(circle, ${evo.glow} 0%, transparent 70%)`;
+
+            let xpNeeded = getXpNeeded();
+            let percent = Math.min((state.xp / xpNeeded) * 100, 100);
+            document.getElementById('xp-bar').style.width = percent + '%';
+            document.getElementById('xp-text-val').innerText = `${Math.floor(state.xp)}/${xpNeeded}`;
+            
+            document.getElementById('cases-badge').innerText = `(${state.cases})`;
+            if(state.cases > 0) document.getElementById('open-case-btn').innerText = `ОТКРЫТЬ (Доступно: ${state.cases})`;
+            else document.getElementById('open-case-btn').innerText = "НЕТ КЕЙСОВ";
+            
+            updateTasksUI();
+        }
+
+        // Переключение Экранов
+        function switchScreen(screenName) {
+            ['clicker-screen', 'shop-screen', 'tasks-screen', 'cases-screen'].forEach(id => document.getElementById(id).classList.add('hidden'));
+            if (screenName === 'main') document.getElementById('clicker-screen').classList.remove('hidden');
+            else if (screenName === 'shop') document.getElementById('shop-screen').classList.remove('hidden');
+            else if (screenName === 'tasks') { document.getElementById('tasks-screen').classList.remove('hidden'); updateTasksUI(); }
+            else if (screenName === 'cases') document.getElementById('cases-screen').classList.remove('hidden');
+        }
+
+        // Кликер
+        function handleTap(clientX, clientY) {
+            if (audioObjects['tapProcess'] && audioObjects['tapProcess'].paused) audioObjects['tapProcess'].play().catch(e => {});
+            clearTimeout(tapTimeout);
+            tapTimeout = setTimeout(() => { if(audioObjects['tapProcess']) audioObjects['tapProcess'].pause(); comboCount = 0; }, 250);
+            
+            const tapTarget = document.getElementById('tap-target');
+            tapTarget.classList.add('active');
+            setTimeout(() => tapTarget.classList.remove('active'), 50);
+
+            let now = Date.now();
+            if (now - lastTapTime < 140) comboCount++; else comboCount = 1;
+            lastTapTime = now;
+
+            state.balance += state.clickPower;
+            state.xp += 2; 
+            state.stats.taps++;
+
+            checkLevelUp();
+
+            let displayAmt = state.clickPower;
+            if (comboCount > 4) displayAmt *= 2;
+            if (comboCount > 10) displayAmt *= 3;
+
+            createFloatingText(clientX, clientY, displayAmt);
+            if (comboCount > 6 && Math.random() > 0.4) setTimeout(() => createFloatingText(clientX + 35, clientY - 15, displayAmt), 40);
+
+            document.getElementById('balance-val').innerText = Math.floor(state.balance);
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+        }
+
+        document.getElementById('tap-target').addEventListener('touchstart', (e) => { e.preventDefault(); for (let i = 0; i < e.touches.length; i++) handleTap(e.touches[i].clientX, e.touches[i].clientY); }, {passive: false});
+        document.getElementById('tap-target').addEventListener('mousedown', (e) => { if (!('ontouchstart' in window)) handleTap(e.clientX, e.clientY); });
+
+        function createFloatingText(x, y, amount) {
+            const text = document.createElement('div');
+            text.classList.add('floating-text');
+            const colors = ['#ff00ff', '#00ffff', '#ffff00', '#00ff00', '#ff3333'];
+            text.style.color = colors[Math.floor(Math.random() * colors.length)];
+            text.innerText = `+${amount}`;
+            text.style.left = `${x - 15 + (Math.random() - 0.5) * 40}px`;
+            text.style.top = `${y - 35}px`;
+            document.body.appendChild(text);
+            setTimeout(() => text.remove(), 550);
+        }
+
+        // Покупка
+        function buyUpgrade(type, baseCost, value, multiplier) {
+            let cost = state.costs[type];
+            if (state.balance >= cost) {
+                state.balance -= cost;
+                if (type === 'click') state.clickPower += value;
+                else state.passiveIncome += value;
+                state.costs[type] = Math.floor(cost * multiplier);
+                state.stats.upgradesBought++;
+                
+                playMemeSound(type);
+                updateUI();
+                saveGame();
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            } else {
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+            }
+        }
+
+        // Лутбоксы
+        function openCase() {
+            if (state.cases > 0) {
+                state.cases--;
+                state.stats.casesOpened++;
+                
+                let roll = Math.random();
+                let msg = "";
+                if (roll < 0.5) {
+                    let w = state.clickPower * 500;
+                    state.balance += w;
+                    msg = `Дроп: ${w} 🥭 (Манго)!`;
+                } else if (roll < 0.85) {
+                    let w = state.level * 250;
+                    state.xp += w;
+                    msg = `Дроп: ${w} XP (Опыта)!`;
+                } else {
+                    state.clickPower += 2;
+                    msg = `ДЖЕКПОТ! Апгрейд: +2 к силе клика!`;
+                }
+
+                playMemeSound('click');
+                showModal('КЕЙС ОТКРЫТ', msg);
+                checkLevelUp();
+                updateUI();
+                saveGame();
+            } else {
+                showModal('ПУСТО!', 'У тебя нет кейсов! Выполняй квесты, чтобы их получить.');
+            }
+        }
+
+        // БЕСКОНЕЧНЫЕ КВЕСТЫ
+        const taskDefs = {
+            taps: { name: "Натапай монеток", getProgress: () => state.stats.taps, step: 1000 },
+            cases: { name: "Открой кейсы", getProgress: () => state.stats.casesOpened, step: 3 },
+            upgrades: { name: "Прокачай апгрейды", getProgress: () => state.stats.upgradesBought, step: 5 },
+            level: { name: "Повысь ранг", getProgress: () => state.level, step: 1 }
+        };
+
+        function getRewardString(type, val) {
+            if(type === 'coins') return `+${val} 🥭`;
+            if(type === 'xp') return `+${val} XP`;
+            return `+${val} 📦`;
+        }
+
+        function updateTasksUI() {
+            const container = document.getElementById('tasks-container');
+            container.innerHTML = '';
+            
+            for (let [key, taskInfo] of Object.entries(state.tasks)) {
+                let current = taskDefs[key].getProgress();
+                let target = taskInfo.target;
+                let canClaim = current >= target;
+
+                let div = document.createElement('div');
+                div.className = 'task-item';
+                div.innerHTML = `
+                    <div class="task-details">
+                        <div class="task-name">${taskDefs[key].name} (${current}/${target})</div>
+                        <div class="task-reward">Награда: ${getRewardString(taskInfo.rewardType, taskInfo.rewardVal)}</div>
+                    </div>
+                    <button class="task-btn" ${!canClaim ? 'disabled' : ''} onclick="claimTask('${key}')">
+                        ${canClaim ? 'Забрать' : 'В процессе'}
+                    </button>
+                `;
+                container.appendChild(div);
+            }
+        }
+
+        function claimTask(taskId) {
+            let t = state.tasks[taskId];
+            let current = taskDefs[taskId].getProgress();
+            if (current >= t.target) {
+                // Выдача награды
+                if (t.rewardType === 'coins') state.balance += t.rewardVal;
+                else if (t.rewardType === 'xp') state.xp += t.rewardVal;
+                else if (t.rewardType === 'cases') state.cases += t.rewardVal;
+
+                let msg = `Награда получена: ${getRewardString(t.rewardType, t.rewardVal)}`;
+                playMemeSound('taskDone');
+                showModal('ЗАДАНИЕ ВЫПОЛНЕНО!', msg);
+
+                // Усложняем задание
+                t.target += taskDefs[taskId].step;
+                
+                // Рандомим следующую награду (балансировка)
+                let r = Math.random();
+                if (r < 0.4) { t.rewardType = 'coins'; t.rewardVal = t.target * 10; }
+                else if (r < 0.8) { t.rewardType = 'xp'; t.rewardVal = state.level * 300; }
+                else { t.rewardType = 'cases'; t.rewardVal = 1; }
+
+                checkLevelUp();
+                updateUI();
+                saveGame();
+            }
+        }
+
+        function startGame() {
+            document.getElementById('loading-screen').style.opacity = '0';
+            setTimeout(() => document.getElementById('loading-screen').style.display = 'none', 500);
+            
+            if (state.lastSavedTime > 0 && state.passiveIncome > 0) {
+                let timePassed = Math.floor((Date.now() - state.lastSavedTime) / 1000);
+                if (timePassed > 10) {
+                    let offlineEarned = timePassed * state.passiveIncome;
+                    state.balance += offlineEarned;
+                    setTimeout(() => showModal('ОФФЛАЙН ДОХОД', `Генератор пахал!\nЗаработано: +${Math.floor(offlineEarned)} 🥭`), 600);
+                }
+            }
+            updateUI();
+        }
+
+        function updateUI() {
+            document.getElementById('balance-val').innerText = Math.floor(state.balance);
+            document.getElementById('pwh-val').innerText = state.passiveIncome;
+            ['click', 'passive1', 'passive2', 'passive3'].forEach(id => document.getElementById(`cost-${id}`).innerText = state.costs[id]);
+            updateEvoUI();
+        }
+
+        function saveGame() { state.lastSavedTime = Date.now(); localStorage.setItem('mango_infinity_state', JSON.stringify(state)); }
+
+        // Фон
+        const bgContainer = document.getElementById('bg-animations');
+        setInterval(() => {
+            const el = document.createElement('div');
+            el.className = 'bg-item';
+            el.innerText = Math.random() > 0.5 ? '🥭' : '67';
+            el.style.left = Math.random() * 100 + 'vw';
+            el.style.animationDuration = (Math.random() * 4 + 3) + 's';
+            bgContainer.appendChild(el);
+            setTimeout(() => el.remove(), 7000);
+        }, 500);
+
+        // Пассив
+        setInterval(() => {
+            if (state.passiveIncome > 0) {
+                state.balance += state.passiveIncome / 10; 
+                document.getElementById('balance-val').innerText = Math.floor(state.balance);
+            }
+        }, 100);
+
+        setInterval(saveGame, 3000);
+    </script>
+</body>
+</html>
