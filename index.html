@@ -19,7 +19,7 @@
             padding: 0; 
             user-select: none; 
             -webkit-user-select: none; 
-            font-family: 'Comic Neue', sans-serif; /* Фикс для iOS: убран cursive */
+            font-family: 'Comic Neue', sans-serif;
         }
 		
 		html, body {
@@ -81,12 +81,15 @@
         /* Кликер */
         #clicker-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; flex: 1; z-index: 10; min-height: 0;}
         
-        /* ДИНАМИЧЕСКИЕ СТИЛИ МОНЕТЫ */
-        .circle-outer { width: 230px; height: 230px; border-radius: 50%; display: flex; align-items: center; justify-content: center; animation: breathe 3s ease-in-out infinite; transition: 0.5s; }
-        .click-btn { width: 190px; height: 190px; border-radius: 50%; cursor: pointer; position: relative; display: flex; align-items: center; justify-content: center; will-change: transform; transition: transform 0.05s ease-out, box-shadow 0.5s, background 0.5s; border: 8px solid transparent; }
+        /* Смещение контейнера монеты чуть-чуть вверх */
+        .clicker-container { transform: translateY(-20px); }
+
+        /* ДИНАМИЧЕСКИЕ СТИЛИ МОНЕТЫ (Размеры увеличены) */
+        .circle-outer { width: 270px; height: 270px; border-radius: 50%; display: flex; align-items: center; justify-content: center; animation: breathe 3s ease-in-out infinite; transition: 0.5s; }
+        .click-btn { width: 220px; height: 220px; border-radius: 50%; cursor: pointer; position: relative; display: flex; align-items: center; justify-content: center; will-change: transform; transition: transform 0.05s ease-out, box-shadow 0.5s, background 0.5s; border: 8px solid transparent; }
         .click-btn.active { transform: scale(0.92) rotate(3deg); filter: brightness(1.3); }
-        .meme-pic { font-size: 80px; position: relative; display: flex; align-items: center; justify-content: center; }
-        .troll-face { position: absolute; font-size: 40px; bottom: 5px; right: 5px; transform: rotate(25deg); }
+        .meme-pic { font-size: 100px; position: relative; display: flex; align-items: center; justify-content: center; }
+        .troll-face { position: absolute; font-size: 45px; bottom: 8px; right: 8px; transform: rotate(25deg); }
 
         /* Меню на 3 кнопки */
         .main-menu-grid { width: 100%; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 15px; z-index: 10; }
@@ -139,10 +142,10 @@
 <body>
 
     <div id="loading-screen">
-        <div class="loader-title">ЗАГРУЗКА ИНФИНИТИ...</div>
+        <div class="loader-title">БЫСТРЕЕ... БЫСТРЕЕ!!!</div>
         <div class="progress-container"><div class="progress-bar" id="progress-bar"></div></div>
         <div style="font-size: 14px; color: #aaa; margin-bottom: 20px;" id="loader-status">Качаем данные: 0%</div>
-        <button class="start-btn" id="start-btn" onclick="startGame()">ВОРВАТЬСЯ</button>
+        <button class="start-btn" id="start-btn" onclick="startGame()">ПОЕХАЛИ!</button>
     </div>
 
     <div id="bg-animations"></div>
@@ -195,7 +198,7 @@
             <div class="screen-title">АПГРЕЙДЫ</div>
             <div class="upgrades-grid">
                 <div class="card" onclick="buyUpgrade('click', 67, 1, 1.5)">
-                    <div><div class="card-name">⚡ Мощный Тап 67</div><div class="card-info">+1 к клику</div></div>
+                    <div><div class="card-name">⚡ Мощный Тап</div><div class="card-info">+1 к клику</div></div>
                     <div class="card-price">🥭 <span id="cost-click">67</span></div>
                 </div>
                 <div class="card" onclick="buyUpgrade('passive1', 150, 2, 1.6)">
@@ -207,7 +210,7 @@
                     <div class="card-price">🥭 <span id="cost-passive2">1000</span></div>
                 </div>
                 <div class="card" onclick="buyUpgrade('passive3', 6767, 100, 2)">
-                    <div><div class="card-name">👁️ Секта 67</div><div class="card-info">+100/сек</div></div>
+                    <div><div class="card-name">👁️ ФЕРМА 67</div><div class="card-info">+100/сек</div></div>
                     <div class="card-price">🥭 <span id="cost-passive3">6767</span></div>
                 </div>
             </div>
@@ -217,7 +220,7 @@
     <div id="tasks-screen" class="hidden" style="width:100%;">
         <div class="back-nav"><button class="back-btn" onclick="switchScreen('main')">⬅️ Назад</button></div>
         <div class="content-screen">
-            <div class="screen-title">БЕСКОНЕЧНЫЕ КВЕСТЫ</div>
+            <div class="screen-title">КВЕСТЫ</div>
             <div class="tasks-list" id="tasks-container">
             </div>
         </div>
@@ -226,7 +229,7 @@
     <div id="cases-screen" class="hidden" style="width:100%;">
         <div class="back-nav"><button class="back-btn" onclick="switchScreen('main')">⬅️ Назад</button></div>
         <div class="content-screen">
-            <div class="screen-title">ЛУТБОКСЫ</div>
+            <div class="screen-title">КЕЙСЫ</div>
             <div class="case-block">
                 <div class="case-icon">📦</div>
                 <div style="text-align:center; color:#ccc;">Тут падает опыт, манго или халявные апгрейды!</div>
@@ -242,9 +245,7 @@
         if (tg) { 
             tg.ready(); tg.expand(); 
             if (tg.initDataUnsafe?.user) { 
-                // Получаем строго First Name
                 tgUsername = tg.initDataUnsafe.user.first_name || "Игрок"; 
-                // Ставим реальную аватарку юзера, если она есть
                 if (tg.initDataUnsafe.user.photo_url) {
                     document.getElementById('player-avatar').innerHTML = `<img src="${tg.initDataUnsafe.user.photo_url}" alt="avatar">`;
                 }
@@ -266,60 +267,58 @@
             lvl4: 'https://www.myinstants.com/media/sounds/slivyyy-melstroi.mp3'
         };
 
-        // Новый игровой движок аудио на базе Web Audio API
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const audioBuffers = {};
+        // НАДЕЖНЫЙ АУДИО-ДВИЖОК НА БАЗЕ HTML5 AUDIO (Обход CORS ограничений fetch)
+        const audioElements = {};
         let loadedSoundsCount = 0;
         const totalSounds = Object.keys(soundUrls).length;
-        let loopSourceNode = null; // Для зацикленного звука тапа
 
-        async function preloadSounds() {
+        function preloadSounds() {
             for (const [key, url] of Object.entries(soundUrls)) {
-                try {
-                    const response = await fetch(url);
-                    const arrayBuffer = await response.arrayBuffer();
-                    audioBuffers[key] = await audioCtx.decodeAudioData(arrayBuffer);
-                } catch (e) {
-                    console.error("Ошибка предзагрузки аудио через Web Audio API:", key, e);
-                }
-                loadedSoundsCount++;
-                let percent = Math.floor((loadedSoundsCount / totalSounds) * 100);
-                document.getElementById('progress-bar').style.width = percent + '%';
-                document.getElementById('loader-status').innerText = `Загрузка медиа: ${percent}%`;
+                const audio = new Audio();
+                audio.src = url;
+                audio.preload = 'auto';
+                
+                const onAudioLoad = () => {
+                    loadedSoundsCount++;
+                    let percent = Math.floor((loadedSoundsCount / totalSounds) * 100);
+                    document.getElementById('progress-bar').style.width = percent + '%';
+                    document.getElementById('loader-status').innerText = `Загрузка медиа: ${percent}%`;
+                    
+                    if (loadedSoundsCount >= totalSounds) {
+                        loadGameState();
+                    }
+                };
+
+                // Триггерим продолжение загрузки в любом случае (даже если у пользователя заблокирован домен)
+                audio.addEventListener('canplaythrough', onAudioLoad, { once: true });
+                audio.addEventListener('error', onAudioLoad, { once: true });
+                
+                audioElements[key] = audio;
             }
-            
-            // Как только звуки готовы — грузим базу данных из Облака Телеграма
-            loadGameState();
         }
         preloadSounds();
 
         function playMemeSound(key) {
-            if (!audioBuffers[key]) return;
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            if (!soundUrls[key]) return;
 
             if (key === 'tapProcess') {
-                if (!loopSourceNode) {
-                    loopSourceNode = audioCtx.createBufferSource();
-                    loopSourceNode.buffer = audioBuffers[key];
-                    loopSourceNode.loop = true;
-                    loopSourceNode.connect(audioCtx.destination);
-                    loopSourceNode.start(0);
+                if (audioElements['tapProcess']) {
+                    audioElements['tapProcess'].loop = true;
+                    audioElements['tapProcess'].play().catch(e => console.log("Audio play deferred:", e));
                 }
             } else {
-                // Обычные звуки создают новый инстанс буфера — это даёт идеальное параллельное наложение без задержек
-                const source = audioCtx.createBufferSource();
-                source.buffer = audioBuffers[key];
-                source.connect(audioCtx.destination);
-                source.start(0);
+                // Создаем мгновенный клон для наложения звуков друг на друга без задержек
+                const soundClone = new Audio(soundUrls[key]);
+                soundClone.play().catch(e => console.log("Audio play deferred:", e));
             }
         }
 
         function stopMemeSound(key) {
-            if (key === 'tapProcess' && loopSourceNode) {
-                try { loopSourceNode.stop(); } catch(e){}
-                loopSourceNode = null;
+            if (key === 'tapProcess' && audioElements['tapProcess']) {
+                try {
+                    audioElements['tapProcess'].pause();
+                    audioElements['tapProcess'].currentTime = 0;
+                } catch(e){}
             }
         }
 
@@ -368,7 +367,6 @@
                     showStartButton();
                 });
             } else {
-                // Фоллбэк для локальных тестов вне мессенджера
                 let local = localStorage.getItem('mango_infinity_state');
                 if (local) {
                     try { state = JSON.parse(local); } catch(e){}
@@ -387,7 +385,7 @@
             state.lastSavedTime = Date.now(); 
             const stringifiedState = JSON.stringify(state);
             
-            localStorage.setItem('mango_infinity_state', stringifiedState); // Локальный дубликат на всякий случай
+            localStorage.setItem('mango_infinity_state', stringifiedState);
             
             if (tg && tg.CloudStorage) {
                 tg.CloudStorage.setItem('mango_infinity_cloud_save', stringifiedState, (err, success) => {
@@ -432,7 +430,6 @@
             document.getElementById('level-val').innerText = state.level;
             document.getElementById('player-status').innerText = `Ранг: ${evo.title}`;
             
-            // Если аватарка из ТГ не подгрузилась, меняем текстовый эмодзи профиля на эволюционный
             if (!tg?.initDataUnsafe?.user?.photo_url) {
                 document.getElementById('player-avatar').innerText = evo.emoji;
             }
@@ -622,10 +619,6 @@
         }
 
         function startGame() {
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume(); // Активируем аудио-контекст по клику (требование современных браузеров)
-            }
-            
             document.getElementById('loading-screen').style.opacity = '0';
             setTimeout(() => document.getElementById('loading-screen').style.display = 'none', 400);
             
