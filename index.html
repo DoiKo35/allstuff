@@ -91,7 +91,7 @@
         .meme-pic { font-size: 100px; position: relative; display: flex; align-items: center; justify-content: center; }
         .troll-face { position: absolute; font-size: 45px; bottom: 8px; right: 8px; transform: rotate(25deg); }
 
-        /* Меню на 3 кнопки */
+        /* Menu */
         .main-menu-grid { width: 100%; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 15px; z-index: 10; }
         .menu-btn { padding: 12px 5px; background: linear-gradient(135deg, #ff00ff, #330066); border: 2px solid #00ffff; border-radius: 12px; color: #fff; font-size: 13px; font-family: Impact, sans-serif; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 0 #00ffff; text-align: center; }
         .menu-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #00ffff; }
@@ -267,18 +267,24 @@
             lvl4: 'https://raw.githubusercontent.com/DoiKo35/allstuff/refs/heads/main/lvl4.mp3'
         };
 
-        // НАДЕЖНЫЙ АУДИО-ДВИЖОК НА БАЗЕ HTML5 AUDIO (Обход CORS ограничений fetch)
+        // НАДЕЖНЫЙ АУДИО-ДВИЖОК НА БАЗЕ HTML5 AUDIO
         const audioElements = {};
         let loadedSoundsCount = 0;
         const totalSounds = Object.keys(soundUrls).length;
 
         function preloadSounds() {
+            if (totalSounds === 0) { loadGameState(); return; }
+
             for (const [key, url] of Object.entries(soundUrls)) {
                 const audio = new Audio();
                 audio.src = url;
-                audio.preload = 'auto';
+                audio.preload = 'metadata'; // Оптимально для мобильных девайсов
                 
+                let incremented = false;
                 const onAudioLoad = () => {
+                    if (incremented) return;
+                    incremented = true;
+
                     loadedSoundsCount++;
                     let percent = Math.floor((loadedSoundsCount / totalSounds) * 100);
                     document.getElementById('progress-bar').style.width = percent + '%';
@@ -289,9 +295,13 @@
                     }
                 };
 
-                // Триггерим продолжение загрузки в любом случае (даже если у пользователя заблокирован домен)
+                // Ждем только заголовки файла. Если мобильный браузер блокирует — сработает таймаут
+                audio.addEventListener('loadedmetadata', onAudioLoad, { once: true });
                 audio.addEventListener('canplaythrough', onAudioLoad, { once: true });
                 audio.addEventListener('error', onAudioLoad, { once: true });
+                
+                // Предохранитель на 2 секунды (чтобы игра запустилась на любой мобилке)
+                setTimeout(onAudioLoad, 2000);
                 
                 audioElements[key] = audio;
             }
@@ -307,7 +317,6 @@
                     audioElements['tapProcess'].play().catch(e => console.log("Audio play deferred:", e));
                 }
             } else {
-                // Создаем мгновенный клон для наложения звуков друг на друга без задержек
                 const soundClone = new Audio(soundUrls[key]);
                 soundClone.play().catch(e => console.log("Audio play deferred:", e));
             }
@@ -350,7 +359,6 @@
 
         let tapTimeout, lastTapTime = 0, comboCount = 0;
 
-        // Загрузка сохранений из Облака Телеграма (CloudStorage)
         function loadGameState() {
             document.getElementById('loader-status').innerText = "Синхронизация с сервером Telegram...";
             
@@ -380,7 +388,6 @@
             document.getElementById('start-btn').style.display = 'block';
         }
 
-        // Сохранение прогресса в Облако Телеграма (CloudStorage)
         function saveGame() { 
             state.lastSavedTime = Date.now(); 
             const stringifiedState = JSON.stringify(state);
@@ -394,7 +401,6 @@
             }
         }
 
-        // Модалка
         function showModal(title, desc) {
             document.getElementById('modal-title').innerText = title;
             document.getElementById('modal-desc').innerText = desc;
@@ -459,7 +465,6 @@
             else if (screenName === 'cases') document.getElementById('cases-screen').classList.remove('hidden');
         }
 
-        // Кликер
         function handleTap(clientX, clientY) {
             playMemeSound('tapProcess');
             clearTimeout(tapTimeout);
@@ -505,7 +510,6 @@
             setTimeout(() => text.remove(), 550);
         }
 
-        // Магазин
         function buyUpgrade(type, baseCost, value, multiplier) {
             let cost = state.costs[type];
             if (state.balance >= cost) {
@@ -524,7 +528,6 @@
             }
         }
 
-        // Лутбоксы
         function openCase() {
             if (state.cases > 0) {
                 state.cases--;
@@ -555,7 +558,6 @@
             }
         }
 
-        // Квесты
         const taskDefs = {
             taps: { name: "Натапай монеток", getProgress: () => state.stats.taps, step: 1000 },
             cases: { name: "Открой кейсы", getProgress: () => state.stats.casesOpened, step: 3 },
@@ -660,7 +662,7 @@
             }
         }, 100);
 
-        // Автосейв каждые 3 секунды в Телеграм
+        // Автосейв
         setInterval(saveGame, 3000);
     </script>
 </body>
