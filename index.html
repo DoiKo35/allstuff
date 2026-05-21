@@ -40,12 +40,18 @@
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         .hidden { display: none !important; }
 
-        /* Фон */
         #bg-animations { position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1; overflow: hidden; pointer-events: none; }
         .bg-item { position: absolute; font-size: 30px; opacity: 0.15; animation: floatBackground linear infinite; }
         @keyframes floatBackground { from { transform: translateY(110dvh) rotate(0deg); } to { transform: translateY(-10dvh) rotate(360deg); } }
 
-        /* Новый неоновый лоадер */
+        /* Всплывающие уведомления (Тосты) */
+        #toast-container { position: fixed; top: 15px; left: 50%; transform: translateX(-50%); z-index: 10001; display: flex; flex-direction: column; gap: 10px; width: 90%; pointer-events: none; }
+        .toast { background: linear-gradient(135deg, #00ffff, #330066); border: 2px solid #ff00ff; color: white; padding: 15px 20px; border-radius: 12px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.7); animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, fadeOut 0.4s ease-in 3.5s forwards; pointer-events: all; cursor: pointer; text-align: left; }
+        .toast-title { color: #ffff00; font-family: Impact, sans-serif; font-size: 16px; margin-bottom: 4px; text-transform: uppercase;}
+        .toast-desc { font-size: 14px; }
+        @keyframes slideDown { from { transform: translateY(-100px) scale(0.9); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateY(-20px); } }
+
         #loading-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: linear-gradient(135deg, #0f021a 0%, #030a1e 50%, #1a0210 100%);
@@ -57,9 +63,8 @@
         .loader-title { font-family: Impact, sans-serif; font-size: 36px; color: #ffff00; text-shadow: 3px 3px 0 red, -2px -2px 0 blue; margin-bottom: 10px; text-transform: uppercase; text-align: center; animation: shake 0.5s infinite; }
         .progress-container { width: 80%; max-width: 300px; height: 20px; background: #1d1833; border: 3px solid #00ffff; border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
         .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #ff00ff, #00ffff); transition: width 0.1s ease; }
-        .start-btn { display: none; padding: 15px 40px; font-size: 22px; background: #ff00ff; color: white; border: 4px solid #00ffff; border-radius: 20px; cursor: pointer; text-transform: uppercase; font-weight: bold; box-shadow: 0 0 25px #ff00ff; animation: pulse 1s infinite; }
+        .start-btn { display: none; padding: 15px 40px; font-size: 22px; background: #ff00ff; color: white; border: 4px solid #00ffff; border-radius: 20px; cursor: pointer; text-transform: uppercase; font-weight: bold; box-shadow: 0 0 25px #ff00ff; animation: pulse 1s infinite; text-align: center; }
 
-        /* Шапка профиля */
         .header { width: 100%; background: var(--card-bg); padding: 10px 15px; border-radius: 16px; border: 2px dashed #00ffff; z-index: 10; flex-shrink: 0; }
         .profile-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;}
         .user-info { display: flex; align-items: center; gap: 10px; }
@@ -71,66 +76,68 @@
         .xp-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #00ffff, #00ff00); transition: width 0.3s ease; }
         .xp-text { font-size: 10px; color: #aaa; text-align: right; margin-top: 2px; }
 
-        /* Баланс */
         .stats-container { text-align: center; margin: 10px 0; z-index: 10; flex-shrink: 0; }
-        .balance { font-family: Impact, sans-serif; font-size: 46px; color: #ffff00; text-shadow: 3px 3px 0 #ff00ff, -2px -2px 0 #00ffff; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .balance { font-family: Impact, sans-serif; font-size: 46px; color: #ffff00; text-shadow: 3px 3px 0 #ff00ff, -2px -2px 0 #00ffff; display: flex; align-items: center; justify-content: center; gap: 8px; transition: color 0.1s; }
+        
+        /* Анимация ошибки баланса */
+        .balance-error { animation: flashRed 0.4s ease-in-out 3; }
+        @keyframes flashRed { 0%, 100% { color: #ffff00; text-shadow: 3px 3px 0 #ff00ff, -2px -2px 0 #00ffff; } 50% { color: #ff0000; text-shadow: 3px 3px 0 #8b0000, -2px -2px 0 #ff0000; } }
 
         .back-nav { width: 100%; display: flex; justify-content: flex-start; z-index: 10; margin-bottom: 10px; }
-        .back-btn { padding: 8px 20px; background: #330066; border: 2px solid #ff00ff; color: #fff; border-radius: 10px; cursor: pointer; font-size: 14px; text-transform: uppercase; }
-
-        /* Кликер */
-        #clicker-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; flex: 1; z-index: 10; min-height: 0;}
         
-        /* Смещение контейнера монеты чуть-чуть вверх */
-        .clicker-container { transform: translateY(-20px); }
+        /* Скорректированное боковое выравнивание для кнопок */
+        .back-btn { padding: 12px 20px; background: #330066; border: 2px solid #ff00ff; color: #fff; border-radius: 10px; cursor: pointer; font-size: 14px; text-transform: uppercase; text-align: left; font-weight: bold;}
 
-        /* ДИНАМИЧЕСКИЕ СТИЛИ МОНЕТЫ (Размеры увеличены) */
-        .circle-outer { width: 270px; height: 270px; border-radius: 50%; display: flex; align-items: center; justify-content: center; animation: breathe 3s ease-in-out infinite; transition: 0.5s; }
-        .click-btn { width: 220px; height: 220px; border-radius: 50%; cursor: pointer; position: relative; display: flex; align-items: center; justify-content: center; will-change: transform; transition: transform 0.05s ease-out, box-shadow 0.5s, background 0.5s; border: 8px solid transparent; }
+        #clicker-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; flex: 1; z-index: 10; min-height: 0;}
+        .clicker-container { transform: translateY(-30px); }
+        .circle-outer { width: 270px; height: 270px; border-radius: 50%; display: flex; align-items: center; justify-content: center; animation: breathe 3s ease-in-out infinite; transition: background 0.5s; }
+        .click-btn { width: 270px; height: 270px; border-radius: 50%; cursor: pointer; position: relative; display: flex; align-items: center; justify-content: center; will-change: transform; transition: transform 0.05s ease-out, border-color 0.5s, background 0.5s; border: 8px solid transparent; }
         .click-btn.active { transform: scale(0.92) rotate(3deg); filter: brightness(1.3); }
-        .meme-pic { font-size: 100px; position: relative; display: flex; align-items: center; justify-content: center; }
+        .meme-pic { font-size: 128px; position: relative; display: flex; align-items: center; justify-content: center; }
         .troll-face { position: absolute; font-size: 45px; bottom: 8px; right: 8px; transform: rotate(25deg); }
 
-        /* Menu */
-        .main-menu-grid { width: 100%; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 15px; z-index: 10; }
-        .menu-btn { padding: 12px 5px; background: linear-gradient(135deg, #ff00ff, #330066); border: 2px solid #00ffff; border-radius: 12px; color: #fff; font-size: 13px; font-family: Impact, sans-serif; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 0 #00ffff; text-align: center; }
+        .main-menu-grid { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; z-index: 10; }
+        /* Скорректированное боковое выравнивание */
+        .menu-btn { padding: 12px 15px; background: linear-gradient(135deg, #ff00ff, #330066); border: 2px solid #00ffff; border-radius: 12px; color: #fff; font-weight: bold; font-size: 15px; font-family: 'Comic Neue', sans-serif; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 0 #00ffff; text-align: left; }
         .menu-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #00ffff; }
 
-        /* Экраны контента */
         .content-screen { width: 100%; background: var(--card-bg); border-radius: 20px; padding: 15px; border: 3px solid #ff00ff; height: 65dvh; overflow-y: auto; z-index: 10; display: flex; flex-direction: column; }
         .screen-title { font-family: Impact, sans-serif; font-size: 24px; color: #00ffff; text-align: center; text-shadow: 2px 2px 0 #ff00ff; margin-bottom: 15px; text-transform: uppercase; }
         
+        .tabs-header { display: flex; gap: 5px; margin-bottom: 15px; }
+        .tab-btn { flex: 1; padding: 12px 10px; text-align: left; background: #1a153a; border: 2px solid #44357a; color: #fff; font-weight: bold; border-radius: 10px; cursor: pointer; text-transform: uppercase; font-size: 12px; }
+        .tab-btn.active { background: #00ffff; color: #000; border-color: #ff00ff; }
+
         .upgrades-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .card { background: linear-gradient(135deg, #330066, #000033); border: 2px solid #00ffff; border-radius: 12px; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; gap: 4px; cursor: pointer; box-shadow: 0 4px 0 #ff00ff; }
+        .card { background: linear-gradient(135deg, #330066, #000033); border: 2px solid #00ffff; border-radius: 12px; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; gap: 4px; cursor: pointer; box-shadow: 0 4px 0 #ff00ff; text-align: left; }
         .card:active { transform: translateY(3px); box-shadow: 0 1px 0 #ff00ff; }
         .card-name { font-size: 13px; font-weight: bold; color: #fff; }
         .card-info { font-size: 11px; color: #ccc; }
         .card-price { font-size: 14px; color: #ffff00; font-weight: bold; font-family: Impact, sans-serif;}
 
-        /* Задания */
         .tasks-list { display: flex; flex-direction: column; gap: 10px; }
         .task-item { background: #1a153a; border: 2px solid #44357a; border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .task-details { display: flex; flex-direction: column; gap: 2px; }
+        .task-details { display: flex; flex-direction: column; gap: 2px; text-align: left;}
         .task-name { font-size: 13px; font-weight: bold; color: #00ffff;}
         .task-reward { font-size: 12px; color: #ffff00; font-weight: bold;}
-        .task-btn { padding: 6px 10px; background: #00ff00; border: none; color: #000; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 11px; text-transform: uppercase; }
+        
+        /* Скорректированное боковое выравнивание */
+        .task-btn { padding: 10px 15px; background: #00ff00; border: none; color: #000; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 12px; text-transform: uppercase; text-align: left; }
         .task-btn:disabled { background: #555; color: #aaa; cursor: not-allowed; }
+        .task-btn.action-btn { background: #00ffff; }
 
-        /* Кейсы */
         .case-block { display: flex; flex-direction: column; align-items: center; gap: 15px; padding: 20px; background: #1a153a; border-radius: 16px; border: 3px dashed #ffff00; }
         .case-icon { font-size: 80px; animation: breathe 2s infinite; }
-        .case-btn { padding: 15px 30px; font-size: 18px; font-weight: bold; background: #ff00ff; border: 3px solid #fff; border-radius: 15px; color: #fff; cursor: pointer; }
+        .case-btn { padding: 15px 30px; font-size: 18px; font-weight: bold; background: #ff00ff; border: 3px solid #fff; border-radius: 15px; color: #fff; cursor: pointer; text-align: left;}
 
-        /* Модальные окна */
         #modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s; }
         #modal-overlay.active { opacity: 1; pointer-events: all; }
-        .modal-box { background: linear-gradient(135deg, #330066, #ff00ff); border: 4px solid #00ffff; border-radius: 20px; padding: 25px; text-align: center; transform: scale(0.8); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-width: 90%; }
+        .modal-box { background: linear-gradient(135deg, #330066, #ff00ff); border: 4px solid #00ffff; border-radius: 20px; padding: 25px; text-align: left; transform: scale(0.8); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-width: 90%; }
         #modal-overlay.active .modal-box { transform: scale(1); }
         .modal-title { font-family: Impact, sans-serif; font-size: 26px; color: #ffff00; text-shadow: 2px 2px 0 #000; margin-bottom: 10px; text-transform: uppercase;}
         .modal-desc { font-size: 16px; margin-bottom: 20px; font-weight: bold;}
-        .modal-btn { padding: 10px 30px; font-size: 16px; font-weight: bold; background: #00ffff; color: #000; border: none; border-radius: 10px; cursor: pointer; text-transform: uppercase; }
+        .modal-btn { padding: 12px 20px; font-size: 16px; font-weight: bold; background: #00ffff; color: #000; border: none; border-radius: 10px; cursor: pointer; text-transform: uppercase; text-align: left; display: block; width: 100%; }
 
-        /* Текст клика */
         .floating-text { position: absolute; font-family: Impact, sans-serif; font-size: 34px; pointer-events: none; animation: floatUpMeme 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; z-index: 100; }
         @keyframes floatUpMeme { 0% { transform: translateY(0) scale(0.6) rotate(-10deg); opacity: 1; } 50% { transform: translateY(-70px) scale(1.4) rotate(10deg); opacity: 1; } 100% { transform: translateY(-130px) scale(1) rotate(0deg); opacity: 0; } }
 
@@ -141,10 +148,12 @@
 </head>
 <body>
 
+    <div id="toast-container"></div>
+
     <div id="loading-screen">
         <div class="loader-title">БЫСТРЕЕ... БЫСТРЕЕ!!!</div>
         <div class="progress-container"><div class="progress-bar" id="progress-bar"></div></div>
-        <div style="font-size: 14px; color: #aaa; margin-bottom: 20px;" id="loader-status">Качаем данные: 0%</div>
+        <div style="font-size: 14px; color: #aaa; margin-bottom: 20px;" id="loader-status">Загрузка: 0%</div>
         <button class="start-btn" id="start-btn" onclick="startGame()">ПОЕХАЛИ!</button>
     </div>
 
@@ -167,7 +176,7 @@
                     <div style="font-size: 12px; color: #00ffff;" id="player-status">Ранг: Манго-Ньюб</div>
                 </div>
             </div>
-            <div class="pnl">Пассив: +<span id="pwh-val">0</span>/с</div>
+            <div class="pnl">Прибыль: +<span id="pwh-val">0</span>/с</div>
         </div>
         <div class="xp-container"><div class="xp-bar" id="xp-bar"></div></div>
         <div class="xp-text">Ур. <span id="level-val">1</span> (<span id="xp-text-val">0/500</span> XP)</div>
@@ -188,46 +197,86 @@
         <div class="main-menu-grid">
             <button class="menu-btn" onclick="switchScreen('shop')">🏪 МАГАЗИН</button>
             <button class="menu-btn" onclick="switchScreen('tasks')">📜 КВЕСТЫ</button>
-            <button class="menu-btn" onclick="switchScreen('cases')">📦 КЕЙСЫ <span id="cases-badge" style="color:#00ff00;">(0)</span></button>
+            <button class="menu-btn" style="grid-column: span 2;" onclick="switchScreen('cases')">📦 КЕЙСЫ <span id="cases-badge" style="color:#00ff00;">(0)</span></button>
         </div>
     </div>
 
     <div id="shop-screen" class="hidden" style="width:100%;">
-        <div class="back-nav"><button class="back-btn" onclick="switchScreen('main')">⬅️ Назад</button></div>
+        <div class="back-nav"><button class="back-btn" onclick="switchScreen('main')">⬅️ Назад в меню</button></div>
         <div class="content-screen">
             <div class="screen-title">АПГРЕЙДЫ</div>
             <div class="upgrades-grid">
-                <div class="card" onclick="buyUpgrade('click', 67, 1, 1.5)">
-                    <div><div class="card-name">⚡ Мощный Тап</div><div class="card-info">+1 к клику</div></div>
-                    <div class="card-price">🥭 <span id="cost-click">67</span></div>
+                <div class="card" onclick="buyUpgrade('click', 100, 1, 1.75)">
+                    <div><div class="card-name">⚡ Прокачка клика</div><div class="card-info">+1 к клику</div></div>
+                    <div class="card-price">🥭 <span id="cost-click">100</span></div>
                 </div>
-                <div class="card" onclick="buyUpgrade('passive1', 150, 2, 1.6)">
-                    <div><div class="card-name">🤖 Бот-Генератор</div><div class="card-info">+2/сек</div></div>
-                    <div class="card-price">🥭 <span id="cost-passive1">150</span></div>
+                <div class="card" onclick="buyUpgrade('passive1', 200, 2, 1.75)">
+                    <div><div class="card-name">🐥 Инкубатор</div><div class="card-info">+2/сек</div></div>
+                    <div class="card-price">🥭 <span id="cost-passive1">200</span></div>
                 </div>
-                <div class="card" onclick="buyUpgrade('passive2', 1000, 15, 1.7)">
-                    <div><div class="card-name">🥭 Манговая Ферма</div><div class="card-info">+15/сек</div></div>
-                    <div class="card-price">🥭 <span id="cost-passive2">1000</span></div>
+                <div class="card" onclick="buyUpgrade('passive2', 500, 10, 2)">
+                    <div><div class="card-name">🐔 Ферма курочек</div><div class="card-info">+10/сек</div></div>
+                    <div class="card-price">🥭 <span id="cost-passive2">500</span></div>
                 </div>
-                <div class="card" onclick="buyUpgrade('passive3', 6767, 100, 2)">
-                    <div><div class="card-name">👁️ ФЕРМА 67</div><div class="card-info">+100/сек</div></div>
-                    <div class="card-price">🥭 <span id="cost-passive3">6767</span></div>
+                <div class="card" onclick="buyUpgrade('passive3', 1000, 25, 2.25)">
+                    <div><div class="card-name">🥭 Манговая Ферма</div><div class="card-info">+25/сек</div></div>
+                    <div class="card-price">🥭 <span id="cost-passive3">1000</span></div>
+                </div>
+                <div class="card" onclick="buyUpgrade('passive4', 6767, 100, 2.5)">
+                    <div><div class="card-name">👁️ ФЕРМА 67</div><div class="card-info">+75/сек</div></div>
+                    <div class="card-price">🥭 <span id="cost-passive4">6767</span></div>
+                </div>
+                <div class="card" onclick="buyUpgrade('passive5', 1000000, 100000, 10)">
+                    <div><div class="card-name">🐔 ЗОЛОТОЙ ИНКУБАТОР</div><div class="card-info">+100000/сек</div></div>
+                    <div class="card-price">🥭 <span id="cost-passive5">1000000</span></div>
                 </div>
             </div>
         </div>
     </div>
 
     <div id="tasks-screen" class="hidden" style="width:100%;">
-        <div class="back-nav"><button class="back-btn" onclick="switchScreen('main')">⬅️ Назад</button></div>
+        <div class="back-nav"><button class="back-btn" onclick="switchScreen('main')">⬅️ Назад в меню</button></div>
         <div class="content-screen">
-            <div class="screen-title">КВЕСТЫ</div>
-            <div class="tasks-list" id="tasks-container">
+            <div class="screen-title">КВЕСТЫ И КАНАЛЫ</div>
+            <div class="tabs-header">
+                <button class="tab-btn active" id="tab-btn-tasks" onclick="switchTaskTab('tasks')">Задания</button>
+                <button class="tab-btn" id="tab-btn-channels" onclick="switchTaskTab('channels')">Каналы & Рефы</button>
+            </div>
+            
+            <div id="tab-tasks" class="tasks-list">
+                </div>
+            
+            <div id="tab-channels" class="tasks-list hidden">
+                <div style="font-size:12px; color:#aaa; margin-bottom:10px;">Приглашай друзей или подписывайся, чтобы получать горы XP!</div>
+                
+                <div class="task-item">
+                    <div class="task-details">
+                        <div class="task-name">Поделиться игрой</div>
+                        <div class="task-reward">Награда: +500 XP</div>
+                    </div>
+                    <button class="task-btn action-btn" onclick="shareReferral()">Поделиться</button>
+                </div>
+
+                <div class="task-item">
+                    <div class="task-details">
+                        <div class="task-name">Подписаться на ClassicMarket</div>
+                        <div class="task-reward">Награда: +100 XP</div>
+                    </div>
+                    <button class="task-btn action-btn" id="sub-btn-1" onclick="verifySubscription('sub-btn-1', 'https://t.me/cmarketoff', 100)">Подписаться</button>
+                </div>
+                <div class="task-item">
+                    <div class="task-details">
+                        <div class="task-name">Подписаться на гений генератора</div>
+                        <div class="task-reward">Награда: +100 XP</div>
+                    </div>
+                    <button class="task-btn action-btn" id="sub-btn-1" onclick="verifySubscription('sub-btn-1', 'https://t.me/gey_generatora', 100)">Подписаться</button>
+                </div>
             </div>
         </div>
     </div>
 
     <div id="cases-screen" class="hidden" style="width:100%;">
-        <div class="back-nav"><button class="back-btn" onclick="switchScreen('main')">⬅️ Назад</button></div>
+        <div class="back-nav"><button class="back-btn" onclick="switchScreen('main')">⬅️ Назад в меню</button></div>
         <div class="content-screen">
             <div class="screen-title">КЕЙСЫ</div>
             <div class="case-block">
@@ -239,13 +288,16 @@
     </div>
 
     <script>
-        // Инициализация Telegram WebApp
+        // --- Telegram Инициализация ---
         let tgUsername = "Игрок";
         const tg = window.Telegram?.WebApp;
+        let userId = 'demo123';
+        
         if (tg) { 
             tg.ready(); tg.expand(); 
             if (tg.initDataUnsafe?.user) { 
                 tgUsername = tg.initDataUnsafe.user.first_name || "Игрок"; 
+                userId = tg.initDataUnsafe.user.id;
                 if (tg.initDataUnsafe.user.photo_url) {
                     document.getElementById('player-avatar').innerHTML = `<img src="${tg.initDataUnsafe.user.photo_url}" alt="avatar">`;
                 }
@@ -253,13 +305,34 @@
         }
         document.getElementById('username').innerText = tgUsername;
 
-        // Конфигурация звуков
+        // --- Система уведомлений (Тосты) ---
+        function showToast(title, desc, onClickAction = null) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<div class="toast-title">${title}</div><div class="toast-desc">${desc}</div>`;
+            if (onClickAction) {
+                toast.onclick = () => { onClickAction(); toast.remove(); };
+            }
+            container.appendChild(toast);
+            setTimeout(() => { if (toast.parentNode) toast.remove(); }, 3900);
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        }
+
+        // --- WEB AUDIO API ДВИЖОК (Лечит проблему с мобильным плеером) ---
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+        const audioBuffers = {};
+        let tapOscillator = null; 
+
         const soundUrls = {
             tapProcess: 'https://raw.githubusercontent.com/DoiKo35/allstuff/refs/heads/main/tapping.mp3',
             click: 'https://raw.githubusercontent.com/DoiKo35/allstuff/refs/heads/main/67.mp3',
-            passive1: 'https://raw.githubusercontent.com/DoiKo35/allstuff/refs/heads/main/generator.mp3',
-            passive2: 'https://raw.githubusercontent.com/DoiKo35/allstuff/refs/heads/main/mango.mp3',
-            passive3: 'https://raw.githubusercontent.com/DoiKo35/allstuff/refs/heads/main/67edit.mp3',
+            passive1: 'https://raw.githubusercontent.com/DoiKo35/allstuff/refs/heads/main/inkubator.mp3',
+            passive2: 'https://raw.githubusercontent.com/DoiKo35/allstuff/refs/heads/main/chickenfarm.mp3',
+            passive3: 'https://raw.githubusercontent.com/DoiKo35/allstuff/refs/heads/main/mango.mp3',
+			passive4: 'https://raw.githubusercontent.com/DoiKo35/allstuff/refs/heads/main/67edit.mp3',
+			passive5: 'https://raw.githubusercontent.com/DoiKo35/allstuff/refs/heads/main/goldeninkubator.mp3',
             taskDone: 'https://raw.githubusercontent.com/DoiKo35/allstuff/refs/heads/main/taskended.mp3',
             lvl1: 'https://raw.githubusercontent.com/DoiKo35/allstuff/refs/heads/main/lvl1.mp3',
             lvl2: 'https://raw.githubusercontent.com/DoiKo35/allstuff/refs/heads/main/lvl2.mp3',
@@ -267,117 +340,115 @@
             lvl4: 'https://raw.githubusercontent.com/DoiKo35/allstuff/refs/heads/main/lvl4.mp3'
         };
 
-        // НАДЕЖНЫЙ АУДИО-ДВИЖОК НА БАЗЕ HTML5 AUDIO
-        const audioElements = {};
         let loadedSoundsCount = 0;
         const totalSounds = Object.keys(soundUrls).length;
 
+        async function loadSound(key, url) {
+            try {
+                const response = await fetch(url);
+                const arrayBuffer = await response.arrayBuffer();
+                const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+                audioBuffers[key] = audioBuffer;
+            } catch (e) {
+                console.warn(`Ошибка загрузки звука ${key}`, e);
+            } finally {
+                loadedSoundsCount++;
+                let percent = Math.floor((loadedSoundsCount / totalSounds) * 100);
+                document.getElementById('progress-bar').style.width = percent + '%';
+                document.getElementById('loader-status').innerText = `Загрузка аудио (Web Audio API): ${percent}%`;
+                
+                if (loadedSoundsCount >= totalSounds) loadGameState();
+            }
+        }
+
         function preloadSounds() {
             if (totalSounds === 0) { loadGameState(); return; }
-
             for (const [key, url] of Object.entries(soundUrls)) {
-                const audio = new Audio();
-                audio.src = url;
-                audio.preload = 'metadata'; // Оптимально для мобильных девайсов
-                
-                let incremented = false;
-                const onAudioLoad = () => {
-                    if (incremented) return;
-                    incremented = true;
-
-                    loadedSoundsCount++;
-                    let percent = Math.floor((loadedSoundsCount / totalSounds) * 100);
-                    document.getElementById('progress-bar').style.width = percent + '%';
-                    document.getElementById('loader-status').innerText = `Загрузка медиа: ${percent}%`;
-                    
-                    if (loadedSoundsCount >= totalSounds) {
-                        loadGameState();
-                    }
-                };
-
-                // Ждем только заголовки файла. Если мобильный браузер блокирует — сработает таймаут
-                audio.addEventListener('loadedmetadata', onAudioLoad, { once: true });
-                audio.addEventListener('canplaythrough', onAudioLoad, { once: true });
-                audio.addEventListener('error', onAudioLoad, { once: true });
-                
-                // Предохранитель на 2 секунды (чтобы игра запустилась на любой мобилке)
-                setTimeout(onAudioLoad, 2000);
-                
-                audioElements[key] = audio;
+                loadSound(key, url);
             }
+            // Предохранитель на случай долгой загрузки
+            setTimeout(() => { if (loadedSoundsCount < totalSounds) loadGameState(); }, 4000);
         }
         preloadSounds();
 
         function playMemeSound(key) {
-            if (!soundUrls[key]) return;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            if (!audioBuffers[key]) return;
 
             if (key === 'tapProcess') {
-                if (audioElements['tapProcess']) {
-                    audioElements['tapProcess'].loop = true;
-                    audioElements['tapProcess'].play().catch(e => console.log("Audio play deferred:", e));
+                // Избегаем множественных лупов
+                if (!tapOscillator) {
+                    const source = audioCtx.createBufferSource();
+                    source.buffer = audioBuffers[key];
+                    source.loop = true;
+                    source.connect(audioCtx.destination);
+                    source.start(0);
+                    tapOscillator = source;
                 }
             } else {
-                const soundClone = new Audio(soundUrls[key]);
-                soundClone.play().catch(e => console.log("Audio play deferred:", e));
+                const source = audioCtx.createBufferSource();
+                source.buffer = audioBuffers[key];
+                source.connect(audioCtx.destination);
+                source.start(0);
             }
         }
 
         function stopMemeSound(key) {
-            if (key === 'tapProcess' && audioElements['tapProcess']) {
-                try {
-                    audioElements['tapProcess'].pause();
-                    audioElements['tapProcess'].currentTime = 0;
-                } catch(e){}
+            if (key === 'tapProcess' && tapOscillator) {
+                tapOscillator.stop();
+                tapOscillator.disconnect();
+                tapOscillator = null;
             }
         }
 
-        // Конфиг мутации монеты
+        // --- Эволюция монетки с исправленными цветами ---
 		const coinEvolutions = [
 			{ title: "Опуск", emoji: "🥭", grad: "radial-gradient(circle, #757575, #37474f)", glow: "rgba(117,117,117,0.2)", border: "#90a4ae" },
+			{ title: "Петух", emoji: "🥭", grad: "radial-gradient(circle, #fff176, #f57f17)", glow: "rgba(255,235,59,0.6)", border: "#fff" },
+			{ title: "Курочка", emoji: "🥭", grad: "radial-gradient(circle, #757575, #37474f)", glow: "rgba(117,117,117,0.2)", border: "#90a4ae" },
 			{ title: "Молодец", emoji: "🥭", grad: "radial-gradient(circle, #4caf50, #1b5e20)", glow: "rgba(76,175,80,0.3)", border: "#81c784" },
-			{ title: "Чёткий", emoji: "🥭", grad: "radial-gradient(circle, #00b0ff, #0a47a3)", glow: "rgba(0,176,255,0.4)", border: "#00e5ff" },
+			{ title: "Пэпэ", emoji: "🥭", grad: "radial-gradient(circle, #00b0ff, #0a47a3)", glow: "rgba(0,176,255,0.4)", border: "#00e5ff" },
 			{ title: "Артур", emoji: "🥭", grad: "radial-gradient(circle, #b388ff, #4a148c)", glow: "rgba(179,136,255,0.4)", border: "#e040fb" },
-			{ title: "Генератор", emoji: "🥭", grad: "radial-gradient(circle, #ff9100, #ff3d00)", glow: "rgba(255,145,0,0.4)", border: "#ffea00" },
-			{ title: "Гений", emoji: "🥭", grad: "radial-gradient(circle, #00e5ff, #006064)", glow: "rgba(0,229,255,0.4)", border: "#a7ffeb" },
-			{ title: "Босс", emoji: "🥭", grad: "radial-gradient(circle, #cfd8dc, #263238)", glow: "rgba(207,216,220,0.5)", border: "#ffffff" },
-			{ title: "Бог", emoji: "🥭", grad: "radial-gradient(circle, #fff176, #f57f17)", glow: "rgba(255,235,59,0.6)", border: "#fff" }
+			{ title: "Инкубатор", emoji: "🥭", grad: "radial-gradient(circle, #ff9100, #ff3d00)", glow: "rgba(255,145,0,0.4)", border: "#ffea00" },
+			{ title: "Сигма", emoji: "🥭", grad: "radial-gradient(circle, #00e5ff, #006064)", glow: "rgba(0,229,255,0.4)", border: "#a7ffeb" },
+			{ title: "Глава", emoji: "🥭", grad: "radial-gradient(circle, #cfd8dc, #263238)", glow: "rgba(207,216,220,0.5)", border: "#ffffff" },
+			{ title: "Бог 67", emoji: "🥭", grad: "radial-gradient(circle, #fff176, #f57f17)", glow: "rgba(255,235,59,0.6)", border: "#fff" },
+			{ title: "Легенда", emoji: "🥭", grad: "radial-gradient(circle, #757575, #37474f)", glow: "rgba(117,117,117,0.2)", border: "#90a4ae" }
 		];
 
-        // Дефолтный стейт
         let state = {
             balance: 0, clickPower: 1, passiveIncome: 0, lastSavedTime: 0,
             level: 1, xp: 0, cases: 0,
             stats: { taps: 0, casesOpened: 0, upgradesBought: 0 },
             tasks: {
-                taps: { target: 1000, rewardType: 'coins', rewardVal: 500 },
-                cases: { target: 3, rewardType: 'xp', rewardVal: 1000 },
+                taps: { target: 1000, rewardType: 'xp', rewardVal: 100 }, // Опыт за квесты!
+                cases: { target: 3, rewardType: 'xp', rewardVal: 500 },
                 upgrades: { target: 5, rewardType: 'cases', rewardVal: 1 },
                 level: { target: 2, rewardType: 'cases', rewardVal: 2 }
             },
-            costs: { click: 67, passive1: 150, passive2: 1000, passive3: 6767 }
+            costs: { click: 100, passive1: 200, passive2: 1000, passive3: 6767 }
         };
 
         let tapTimeout, lastTapTime = 0, comboCount = 0;
+        let savePending = false;
 
         function loadGameState() {
             document.getElementById('loader-status').innerText = "Синхронизация с сервером Telegram...";
             
             if (tg && tg.CloudStorage) {
-                tg.CloudStorage.getItem('mango_infinity_cloud_save', (err, value) => {
+                tg.CloudStorage.getItem('mango_infinity_save_v2', (err, value) => {
                     if (!err && value) {
                         try {
                             const parsed = JSON.parse(value);
-                            if (parsed && typeof parsed === 'object') state = parsed;
-                        } catch (e) {
-                            console.error("Ошибка парсинга дата-пакета облака:", e);
-                        }
+                            if (parsed && typeof parsed === 'object') state = { ...state, ...parsed };
+                        } catch (e) {}
                     }
                     showStartButton();
                 });
             } else {
                 let local = localStorage.getItem('mango_infinity_state');
                 if (local) {
-                    try { state = JSON.parse(local); } catch(e){}
+                    try { state = { ...state, ...JSON.parse(local) }; } catch(e){}
                 }
                 showStartButton();
             }
@@ -388,17 +459,22 @@
             document.getElementById('start-btn').style.display = 'block';
         }
 
-        function saveGame() { 
-            state.lastSavedTime = Date.now(); 
-            const stringifiedState = JSON.stringify(state);
-            
-            localStorage.setItem('mango_infinity_state', stringifiedState);
-            
-            if (tg && tg.CloudStorage) {
-                tg.CloudStorage.setItem('mango_infinity_cloud_save', stringifiedState, (err, success) => {
-                    if (err) console.error("Ошибка записи данных в CloudStorage Telegram:", err);
-                });
-            }
+        function requestSave() {
+            if (savePending) return;
+            savePending = true;
+            setTimeout(() => {
+                state.lastSavedTime = Date.now(); 
+                const stringifiedState = JSON.stringify(state);
+                localStorage.setItem('mango_infinity_state', stringifiedState);
+                
+                if (tg && tg.CloudStorage) {
+                    tg.CloudStorage.setItem('mango_infinity_save_v2', stringifiedState, () => {
+                        savePending = false;
+                    });
+                } else {
+                    savePending = false;
+                }
+            }, 2000); // Батчинг сохранений
         }
 
         function showModal(title, desc) {
@@ -454,7 +530,7 @@
             if(state.cases > 0) document.getElementById('open-case-btn').innerText = `ОТКРЫТЬ (Доступно: ${state.cases})`;
             else document.getElementById('open-case-btn').innerText = "НЕТ КЕЙСОВ";
             
-            updateTasksUI();
+            checkTasksCompletion();
         }
 
         function switchScreen(screenName) {
@@ -465,7 +541,18 @@
             else if (screenName === 'cases') document.getElementById('cases-screen').classList.remove('hidden');
         }
 
+        function switchTaskTab(tabName) {
+            document.getElementById('tab-btn-tasks').classList.remove('active');
+            document.getElementById('tab-btn-channels').classList.remove('active');
+            document.getElementById('tab-tasks').classList.add('hidden');
+            document.getElementById('tab-channels').classList.add('hidden');
+
+            document.getElementById(`tab-btn-${tabName}`).classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+        }
+
         function handleTap(clientX, clientY) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
             playMemeSound('tapProcess');
             clearTimeout(tapTimeout);
             tapTimeout = setTimeout(() => { stopMemeSound('tapProcess'); comboCount = 0; }, 250);
@@ -479,10 +566,7 @@
             lastTapTime = now;
 
             state.balance += state.clickPower;
-            state.xp += 2; 
             state.stats.taps++;
-
-            checkLevelUp();
 
             let displayAmt = state.clickPower;
             if (comboCount > 4) displayAmt *= 2;
@@ -493,6 +577,8 @@
 
             document.getElementById('balance-val').innerText = Math.floor(state.balance);
             if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            requestSave();
+            checkTasksCompletion(true); // Тихая проверка без обновления всего UI
         }
 
         document.getElementById('tap-target').addEventListener('touchstart', (e) => { e.preventDefault(); for (let i = 0; i < e.touches.length; i++) handleTap(e.touches[i].clientX, e.touches[i].clientY); }, {passive: false});
@@ -521,9 +607,15 @@
                 
                 playMemeSound(type);
                 updateUI();
-                saveGame();
+                requestSave();
+                showToast('КУПЛЕНО!', `Улучшение успешно приобретено.`);
                 if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             } else {
+                // Анимация нехватки денег
+                const balEl = document.querySelector('.balance');
+                balEl.classList.remove('balance-error');
+                void balEl.offsetWidth; // trigger reflow
+                balEl.classList.add('balance-error');
                 if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
             }
         }
@@ -552,7 +644,7 @@
                 showModal('КЕЙС ОТКРЫТ', msg);
                 checkLevelUp();
                 updateUI();
-                saveGame();
+                requestSave();
             } else {
                 showModal('ПУСТО!', 'У тебя нет кейсов! Выполняй квесты, чтобы их получить.');
             }
@@ -571,8 +663,22 @@
             return `+${val} 📦`;
         }
 
+        let notifiedTasks = new Set();
+        
+        function checkTasksCompletion(silent = false) {
+            for (let [key, taskInfo] of Object.entries(state.tasks)) {
+                let current = taskDefs[key].getProgress();
+                if (current >= taskInfo.target && !notifiedTasks.has(key)) {
+                    notifiedTasks.add(key);
+                    showToast('КВЕСТ ГОТОВ!', `Задание "${taskDefs[key].name}" выполнено! Жми сюда.`, () => switchScreen('tasks'));
+                }
+            }
+            if(!silent) updateTasksUI();
+        }
+
         function updateTasksUI() {
-            const container = document.getElementById('tasks-container');
+            const container = document.getElementById('tab-tasks');
+            if(!container) return;
             container.innerHTML = '';
             
             for (let [key, taskInfo] of Object.entries(state.tasks)) {
@@ -608,19 +714,58 @@
                 showModal('ЗАДАНИЕ ВЫПОЛНЕНО!', msg);
 
                 t.target += taskDefs[taskId].step;
+                notifiedTasks.delete(taskId); // Сброс уведомления для следующего этапа
                 
                 let r = Math.random();
-                if (r < 0.4) { t.rewardType = 'coins'; t.rewardVal = t.target * 10; }
-                else if (r < 0.8) { t.rewardType = 'xp'; t.rewardVal = state.level * 300; }
+                if (r < 0.3) { t.rewardType = 'coins'; t.rewardVal = t.target * 10; }
+                else if (r < 0.9) { t.rewardType = 'xp'; t.rewardVal = state.level * 300; } // Чаще даем опыт
                 else { t.rewardType = 'cases'; t.rewardVal = 1; }
 
                 checkLevelUp();
                 updateUI();
-                saveGame();
+                requestSave();
             }
         }
 
+        // --- Каналы и Рефералы ---
+        function shareReferral() {
+            const botUsername = 'gey_generatora_gamebot';
+            const refLink = `https://t.me/${botUsername}?start=ref_${userId}`;
+            const text = `Залетай ко мне в ГЕНИЙ ГЕНЕРАТОРА ГЕЙМ! Тарабаним манго и 67 😎`;
+            
+            if (tg && tg.openTelegramLink) {
+                tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent(text)}`);
+            } else {
+                navigator.clipboard.writeText(refLink);
+                showToast('СКОПИРОВАНО', 'Ссылка скопирована в буфер обмена!');
+            }
+        }
+
+        function verifySubscription(btnId, url, xpReward) {
+            const btn = document.getElementById(btnId);
+            btn.disabled = true;
+            btn.innerText = "Проверка...";
+            
+            // Открываем канал
+            if (tg && tg.openTelegramLink) tg.openTelegramLink(url);
+            else window.open(url, '_blank');
+
+            // Имитация проверки (Для реальной нужен бэкенд, который проверит статус пользователя в канале)
+            setTimeout(() => {
+                state.xp += xpReward;
+                btn.innerText = "Выполнено";
+                btn.classList.remove('action-btn');
+                btn.style.background = "#555";
+                
+                checkLevelUp();
+                requestSave();
+                showToast('ОТЛИЧНО!', `Ты получил +${xpReward} XP за подписку!`);
+                playMemeSound('taskDone');
+            }, 5000);
+        }
+
         function startGame() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
             document.getElementById('loading-screen').style.opacity = '0';
             setTimeout(() => document.getElementById('loading-screen').style.display = 'none', 400);
             
@@ -638,11 +783,12 @@
         function updateUI() {
             document.getElementById('balance-val').innerText = Math.floor(state.balance);
             document.getElementById('pwh-val').innerText = state.passiveIncome;
-            ['click', 'passive1', 'passive2', 'passive3'].forEach(id => document.getElementById(`cost-${id}`).innerText = state.costs[id]);
+            ['click', 'passive1', 'passive2', 'passive3', 'passive4', 'passive5'].forEach(id => {
+                if(document.getElementById(`cost-${id}`)) document.getElementById(`cost-${id}`).innerText = state.costs[id] || 0;
+            });
             updateEvoUI();
         }
 
-        // Фон частиц
         const bgContainer = document.getElementById('bg-animations');
         setInterval(() => {
             const el = document.createElement('div');
@@ -654,7 +800,6 @@
             setTimeout(() => el.remove(), 7000);
         }, 500);
 
-        // Пассивный доход
         setInterval(() => {
             if (state.passiveIncome > 0) {
                 state.balance += state.passiveIncome / 10; 
@@ -662,8 +807,8 @@
             }
         }, 100);
 
-        // Автосейв
-        setInterval(saveGame, 3000);
+        // Периодическое тихое сохранение, если были изменения
+        setInterval(() => requestSave(), 10000);
     </script>
 </body>
 </html>
