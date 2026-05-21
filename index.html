@@ -89,11 +89,11 @@
         .back-btn { padding: 12px 20px; background: #330066; border: 2px solid #ff00ff; color: #fff; border-radius: 10px; cursor: pointer; font-size: 14px; text-transform: uppercase; text-align: left; font-weight: bold;}
 
         #clicker-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; flex: 1; z-index: 10; min-height: 0;}
-        .clicker-container { transform: translateY(-30px); }
+        .clicker-container { transform: translateY(-25px); }
         .circle-outer { width: 270px; height: 270px; border-radius: 50%; display: flex; align-items: center; justify-content: center; animation: breathe 3s ease-in-out infinite; transition: background 0.5s; }
         .click-btn { width: 270px; height: 270px; border-radius: 50%; cursor: pointer; position: relative; display: flex; align-items: center; justify-content: center; will-change: transform; transition: transform 0.05s ease-out, border-color 0.5s, background 0.5s; border: 8px solid transparent; }
         .click-btn.active { transform: scale(0.92) rotate(3deg); filter: brightness(1.3); }
-        .meme-pic { font-size: 128px; position: relative; display: flex; align-items: center; justify-content: center; }
+        .meme-pic { font-size: 156px; position: relative; display: flex; align-items: center; justify-content: center; }
         .troll-face { position: absolute; font-size: 45px; bottom: 8px; right: 8px; transform: rotate(25deg); }
 
         .main-menu-grid { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; z-index: 10; }
@@ -173,7 +173,8 @@
                 <div class="avatar" id="player-avatar">🥭</div>
                 <div>
                     <div style="font-weight: bold; font-size: 15px; color:#fff" id="username">Игрок</div>
-                    <div style="font-size: 12px; color: #00ffff;" id="player-status">Ранг: Манго-Ньюб</div>
+                    <div style="font-size: 12px; color: #00ffff;" id="player-status">Ранг: Опуск</div>
+                    <div style="font-size: 12px; color: #00ffff;" id="player-status">Ранг: Опуск</div>
                 </div>
             </div>
             <div class="pnl">Прибыль: +<span id="pwh-val">0</span>/с</div>
@@ -190,7 +191,7 @@
         <div class="clicker-container">
             <div class="circle-outer" id="coin-glow">
                 <div class="click-btn" id="tap-target">
-                    <div class="meme-pic" id="coin-emoji">🥭<div class="troll-face">😎</div></div>
+                    <div class="meme-pic" id="coin-emoji">🥭</div>
                 </div>
             </div>
         </div>
@@ -257,13 +258,6 @@
                     <button class="task-btn action-btn" onclick="shareReferral()">Поделиться</button>
                 </div>
 
-                <div class="task-item">
-                    <div class="task-details">
-                        <div class="task-name">Подписаться на ClassicMarket</div>
-                        <div class="task-reward">Награда: +100 XP</div>
-                    </div>
-                    <button class="task-btn action-btn" id="sub-btn-1" onclick="verifySubscription('sub-btn-1', 'https://t.me/cmarketoff', 100)">Подписаться</button>
-                </div>
                 <div class="task-item">
                     <div class="task-details">
                         <div class="task-name">Подписаться на гений генератора</div>
@@ -426,7 +420,7 @@
                 upgrades: { target: 5, rewardType: 'cases', rewardVal: 1 },
                 level: { target: 2, rewardType: 'cases', rewardVal: 2 }
             },
-            costs: { click: 100, passive1: 200, passive2: 1000, passive3: 6767 }
+            costs: { click: 100, passive1: 200, passive2: 500, passive3: 1000, passive4: 6767, passive5: 1000000 }
         };
 
         let tapTimeout, lastTapTime = 0, comboCount = 0;
