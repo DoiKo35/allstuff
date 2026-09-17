@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ГДЗ та ГКР 8 Клас</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --grid-color: #e2e8f0;
+            --card-bg: #ffffff;
+            --text-color: #2d3748;
+            --primary-color: #3182ce;
+            --primary-hover: #2b6cb0;
+            --accent-dz: #38a169;
+            --accent-kr: #dd6b20;
+            --border-color: #cbd5e0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            /* Ефект зошита в клітинку */
+            background-image: 
+                linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+            background-size: 24px 24px;
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+            border-bottom: 2px solid var(--border-color);
+            padding: 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: #1a202c;
+            font-weight: 700;
+        }
+
+        .author {
+            font-size: 0.95rem;
+            color: #4a5568;
+            background: #edf2f7;
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px dashed var(--border-color);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-btn {
+            background: white;
+            border: 2px solid var(--border-color);
+            padding: 8px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            color: var(--text-color);
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .search-box {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            background: white;
+            transition: border-color 0.2s;
+        }
+
+        .search-box:focus {
+            border-color: var(--primary-color);
+        }
+
+        main {
+            max-width: 1100px;
+            width: 100%;
+            margin: 30px auto;
+            padding: 0 20px;
+            flex: 1;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px 20px;
+            text-decoration: none;
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+            border-color: var(--primary-color);
+        }
+
+        .card i {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .card h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: 6px;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        .badge.dz {
+            background-color: var(--accent-dz);
+        }
+
+        .badge.kr {
+            background-color: var(--accent-kr);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 2px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.5rem; }
+            .grid-container { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-content">
+            <h1>📚 ГДЗ та КР — 8 Клас</h1>
+            <div class="author">Створив: Бондарчук Кирило 8-Б</div>
+            
+            <!-- Швидкий перехід / Фільтрація -->
+            <div class="nav-buttons">
+                <button class="nav-btn active" onclick="filterCards('all')">Усі</button>
+                <button class="nav-btn" onclick="filterCards('dz')">Тільки ДЗ</button>
+                <button class="nav-btn" onclick="filterCards('kr')">Тільки КР</button>
+            </div>
+
+            <!-- Пошук -->
+            <input type="text" id="searchInput" class="search-box" placeholder="Шукати предмет..." onkeyup="searchCards()">
+        </div>
+    </header>
+
+    <main>
+        <div class="grid-container" id="cardsGrid">
+            
+            <!-- Алгебра (ДЗ) -->
+            <a href="https://gdzonline.net/848-algebra-8-ister.html" target="_blank" class="card" data-category="dz" data-title="алгебра дз істер">
+                <span class="badge dz">ДЗ</span>
+                <i class="fa-solid fa-calculator"></i>
+                <h2>Алгебра (ДЗ)</h2>
+                <p>Істер 8 клас</p>
+            </a>
+
+            <!-- Геометрія (ДЗ) -->
+            <a href="https://gdzonline.net/647-geomeriya-8-klas-ister.html" target="_blank" class="card" data-category="dz" data-title="геометрія дз істер">
+                <span class="badge dz">ДЗ</span>
+                <i class="fa-solid fa-shapes"></i>
+                <h2>Геометрія (ДЗ)</h2>
+                <p>Істер 8 клас</p>
+            </a>
+
+            <!-- Алгебра (КР) -->
+            <a href="https://gdzister.in.ua/s-ta-dr-z-alhebry" target="_blank" class="card" data-category="kr" data-title="алгебра кр самостійні">
+                <span class="badge kr">КР</span>
+                <i class="fa-solid fa-square-root-variable"></i>
+                <h2>Алгебра (КР)</h2>
+                <p>Самостійні та контрольні</p>
+            </a>
+
+            <!-- Геометрія (КР) -->
+            <a href="https://gdzister.in.ua/s-ta-dr-z-heometriji" target="_blank" class="card" data-category="kr" data-title="геометрія кр самостійні">
+                <span class="badge kr">КР</span>
+                <i class="fa-solid fa-draw-polygon"></i>
+                <h2>Геометрія (КР)</h2>
+                <p>Самостійні та контрольні</p>
+            </a>
+
+            <!-- Фізика (ДЗ) -->
+            <a href="https://gdzonline.net/652-baryahtar-fizyka-8-klas.html" target="_blank" class="card" data-category="dz" data-title="фізика дз бар'яхтар">
+                <span class="badge dz">ДЗ</span>
+                <i class="fa-solid fa-atom"></i>
+                <h2>Фізика (ДЗ)</h2>
+                <p>Бар'яхтар 8 клас</p>
+            </a>
+
+            <!-- Хімія (ДЗ) -->
+            <a href="https://gdzonline.net/654-himiya-grygorovych-8-klas.html" target="_blank" class="card" data-category="dz" data-title="хімія дз григорович">
+                <span class="badge dz">ДЗ</span>
+                <i class="fa-solid fa-flask"></i>
+                <h2>Хімія (ДЗ)</h2>
+                <p>Григорович 8 клас</p>
+            </a>
+
+            <!-- Укр. мова (ДЗ) -->
+            <a href="https://gdzonline.net/651-ukrainska-mova-8-klas-zabolotnyy.html" target="_blank" class="card" data-category="dz" data-title="українська мова дз заболотний">
+                <span class="badge dz">ДЗ</span>
+                <i class="fa-solid fa-book-bookmark"></i>
+                <h2>Укр. мова (ДЗ)</h2>
+                <p>Заболотний 8 клас</p>
+            </a>
+
+            <!-- Укр. літ (ДЗ) -->
+            <a href="https://gdzonline.net/906-ukrlit-8-klas-avramenko.html" target="_blank" class="card" data-category="dz" data-title="українська література дз авраменко">
+                <span class="badge dz">ДЗ</span>
+                <i class="fa-solid fa-book-open"></i>
+                <h2>Укр. літ (ДЗ)</h2>
+                <p>Авраменко 8 клас</p>
+            </a>
+
+            <!-- Англ. мова (Зошит) (ДЗ) -->
+            <a href="https://gdzonline.net/902-english-8-jones-workbook.html" target="_blank" class="card" data-category="dz" data-title="англійська мова зошит workbook jones">
+                <span class="badge dz">ДЗ</span>
+                <i class="fa-solid fa-book"></i>
+                <h2>Англ. мова (Зошит)</h2>
+                <p>Workbook (Jones)</p>
+            </a>
+
+            <!-- Англ. мова (Книжка) (ДЗ) -->
+            <a href="https://gdzonline.net/901-english-8-styring.html" target="_blank" class="card" data-category="dz" data-title="англійська мова книжка підручник styring">
+                <span class="badge dz">ДЗ</span>
+                <i class="fa-solid fa-globe"></i>
+                <h2>Англ. мова (Книжка)</h2>
+                <p>Підручник (Styring)</p>
+            </a>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 | Розроблено для учнів 8-го класу</p>
+    </footer>
+
+    <script>
+        // Функція фільтрації за категоріями (ДЗ / КР)
+        function filterCards(category) {
+            const cards = document.querySelectorAll('.card');
+            const buttons = document.querySelectorAll('.nav-btn');
+
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            cards.forEach(card => {
+                const cardCategory = card.getAttribute('data-category');
+                if (category === 'all' || cardCategory === category) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Живий пошук по предметах
+        function searchCards() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.card');
+
+            cards.forEach(card => {
+                const titleData = card.getAttribute('data-title');
+                if (titleData.includes(input)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
