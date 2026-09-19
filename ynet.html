@@ -1,12 +1,21 @@
 <!DOCTYPE html>
-<html lang="uk" data-theme="dark">
+<html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>Училка.нет</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="img/logo.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+
+    <!-- Резервний варіант для старих браузерів (у корені сайту) -->
+    <link rel="shortcut icon" href="/favicon.ico">
+
+    <!-- Іконка для пристроїв Apple при додаванні на головний екран -->
+    <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+
     
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -14,34 +23,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* ТЕМНА ТЕМА (за замовчуванням) */
-        [data-theme="dark"] {
-            --bg-color: #12151e;
-            --grid-color: #1e2433;
-            --card-bg: #1a1f2c;
-            --header-bg: #161a26;
+        :root {
+            --bg-color: #000000;
+            --grid-color: #141414;
+            --card-bg: #0a0a0a;
+            --card-hover: #111111;
+            --header-bg: #000000;
             --text-color: #e2e8f0;
-            --text-muted: #94a3b8;
-            --border-color: #2e364a;
+            --text-muted: #888888;
+            --border-color: #222222;
             --primary-color: #3b82f6;
             --accent-dz: #10b981;
             --accent-kr: #f97316;
-            --input-bg: #12151e;
-        }
-
-        /* СВІТЛА ТЕМА */
-        [data-theme="light"] {
-            --bg-color: #f8fafc;
-            --grid-color: #e2e8f0;
-            --card-bg: #ffffff;
-            --header-bg: #ffffff;
-            --text-color: #1e293b;
-            --text-muted: #64748b;
-            --border-color: #cbd5e1;
-            --primary-color: #2563eb;
-            --accent-dz: #059669;
-            --accent-kr: #ea580c;
-            --input-bg: #ffffff;
+            --accent-search: #8b5cf6;
+            --input-bg: #0a0a0a;
         }
 
         * {
@@ -49,12 +44,10 @@
             margin: 0;
             padding: 0;
             font-family: 'Montserrat', sans-serif;
-            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
         }
 
         body {
             background-color: var(--bg-color);
-            /* Зошит у клітинку */
             background-image: 
                 linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
                 linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
@@ -65,17 +58,30 @@
             flex-direction: column;
         }
 
+        .search-box, .nav-btn, .card {
+            transition: background-color 0.15s ease, border-color 0.15s ease;
+        }
+
         header {
             background-color: var(--header-bg);
             border-bottom: 2px solid var(--border-color);
-            /* Підтримка челок та безпечних зон на мобільних */
             padding-top: calc(12px + env(safe-area-inset-top));
-            padding-bottom: 15px;
+            padding-bottom: 12px;
             padding-left: max(15px, env(safe-area-inset-left));
             padding-right: max(15px, env(safe-area-inset-right));
+            position: -webkit-sticky;
             position: sticky;
             top: 0;
-            z-index: 1000;
+            z-index: 100;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -100px; left: 0; right: 0;
+            height: 100px;
+            background-color: var(--header-bg);
+            z-index: -1;
         }
 
         .header-container {
@@ -99,48 +105,21 @@
             text-decoration: none;
             color: var(--text-color);
         }
-
+        
         .brand img {
-            width: 32px;
-            height: 32px;
-            object-fit: contain;
+            width: 28px;
+            height: 28px;
         }
 
-        .brand h1 {
-            font-size: 1.4rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
+        .brand h1 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.5px; }
+        .brand p { font-size: 0.8rem; color: var(--text-muted); margin-left: 5px; font-style: italic; }
 
-        .theme-toggle {
-            background: transparent;
-            border: 2px solid var(--border-color);
-            color: var(--text-color);
-            width: 38px;
-            height: 38px;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-        }
-
-        .theme-toggle:hover {
-            border-color: var(--primary-color);
-            color: var(--primary-color);
-        }
-
-        .controls {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
+        .controls { display: flex; gap: 10px; flex-wrap: wrap; }
 
         .search-box {
             flex: 1;
             min-width: 200px;
-            padding: 8px 12px;
+            padding: 10px 12px;
             border: 2px solid var(--border-color);
             border-radius: 8px;
             font-size: 0.95rem;
@@ -149,14 +128,9 @@
             color: var(--text-color);
         }
 
-        .search-box:focus {
-            border-color: var(--primary-color);
-        }
+        .search-box:focus { border-color: var(--primary-color); }
 
-        .nav-buttons {
-            display: flex;
-            gap: 6px;
-        }
+        .nav-buttons { display: flex; gap: 6px; }
 
         .nav-btn {
             background: var(--card-bg);
@@ -193,7 +167,7 @@
             background: var(--card-bg);
             border: 2px solid var(--border-color);
             border-radius: 10px;
-            padding: 20px 15px;
+            padding: 25px 15px 20px;
             text-decoration: none;
             color: var(--text-color);
             display: flex;
@@ -201,34 +175,27 @@
             align-items: center;
             text-align: center;
             position: relative;
+            cursor: pointer;
         }
 
         .card:hover {
             border-color: var(--primary-color);
-            transform: translateY(-2px);
+            background: var(--card-hover);
         }
 
-        .card i {
-            font-size: 2.4rem;
-            margin-bottom: 12px;
-            color: var(--primary-color);
-        }
+        .card i { font-size: 2.4rem; margin-bottom: 12px; color: var(--primary-color); }
+        .card h2 { font-size: 1.15rem; font-weight: 700; margin-bottom: 4px; }
+        .card p { font-size: 0.85rem; color: var(--text-muted); }
 
-        .card h2 {
-            font-size: 1.15rem;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .card p {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        .badge {
+        .badges-container {
             position: absolute;
             top: 10px;
             right: 10px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .badge {
             padding: 2px 6px;
             font-size: 0.7rem;
             font-weight: 700;
@@ -238,6 +205,154 @@
 
         .badge.dz { background-color: var(--accent-dz); }
         .badge.kr { background-color: var(--accent-kr); }
+        .badge.search-badge { background-color: var(--accent-search); }
+
+        /* Кнопка "Улюблене" */
+        .fav-btn {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 4px;
+            line-height: 1;
+            z-index: 2;
+        }
+        .fav-btn:hover { color: #facc15; }
+        .fav-btn.active { color: #facc15; }
+        .fav-btn.active i { font-weight: 900; }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: var(--text-muted);
+            padding: 40px 10px;
+        }
+        .empty-state i { font-size: 2rem; margin-bottom: 10px; display: block; }
+
+        /* Модальные окна */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85);
+            display: none; align-items: center; justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+        }
+
+        /* Убираем отступы у оверлея вьювера, чтобы он был на весь экран */
+        #viewerModal {
+            padding: 0;
+            background: rgba(0,0,0,0.95); /* Чуть темнее фон для фото */
+        }
+
+        .modal {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        /* Специфичные стили для полноэкранного вьювера */
+        .modal-viewer {
+            width: 100vw; 
+            height: 100vh; 
+            max-width: none; 
+            max-height: none; 
+            border-radius: 0;
+            border: none;
+            display: flex; 
+            flex-direction: column;
+            padding: max(15px, env(safe-area-inset-top)) max(15px, env(safe-area-inset-right)) max(15px, env(safe-area-inset-bottom)) max(15px, env(safe-area-inset-left));
+        }
+
+        .modal h2 { margin-bottom: 15px; font-size: 1.3rem; }
+        .modal p.desc { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 15px; }
+
+        #searchError {
+            color: #ef4444; font-weight: 600; font-size: 0.85rem; 
+            margin-top: 10px; margin-bottom: 15px; display: none;
+        }
+
+        /* Контейнер картинки: overflow hidden + touch-action none для свайпов */
+        .image-container {
+            flex: 1; 
+            overflow: hidden; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            background: var(--bg-color);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-top: 10px;
+            touch-action: none; /* Критично для зума пальцами! */
+        }
+
+        /* Сама картинка */
+        .image-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: none;
+            transform-origin: center center;
+            will-change: transform; /* Покращує плавність на телефонах */
+            cursor: grab;
+        }
+        .image-container img:active { cursor: grabbing; }
+
+        /* Керування зумом (для десктопу, де немає жестів пальцями) */
+        .zoom-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            background: rgba(10,10,10,0.85);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 6px;
+            z-index: 5;
+        }
+        .zoom-controls button {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .zoom-controls button:hover { background: var(--primary-color); border-color: var(--primary-color); }
+
+        /* Тост-повідомлення */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--card-bg);
+            border: 2px solid var(--primary-color);
+            color: var(--text-color);
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            z-index: 10000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
 
         footer {
             text-align: center;
@@ -247,6 +362,9 @@
             font-size: 0.8rem;
             color: var(--text-muted);
             margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
         }
 
         @media (max-width: 500px) {
@@ -254,6 +372,9 @@
             .nav-buttons { width: 100%; }
             .nav-btn { flex: 1; }
         }
+
+        footer a { color: var(--primary-color); text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -264,24 +385,16 @@
                 <a href="#" class="brand">
                     <img src="img/logo.svg" alt="Логотип">
                     <h1>Училка.нет</h1>
-                    <p>67 67 67 67 67 67 67</p>
+                    <p id="headerQuote"></p>
                 </a>
-                
-                <!-- Перемикач теми -->
-                <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="Змінити тему">
-                    <i class="fa-solid fa-sun" id="themeIcon"></i>
-                </button>
             </div>
-
             <div class="controls">
-                <!-- Пошук -->
-                <input type="text" id="searchInput" class="search-box" placeholder="Пошук предмету..." onkeyup="searchCards()">
-                
-                <!-- Фільтр ДЗ/КР -->
+                <input type="text" id="searchInput" class="search-box" placeholder="Пошук предмету..." onkeyup="applyFilters()">
                 <div class="nav-buttons">
                     <button class="nav-btn active" onclick="filterCards('all', this)">Усі</button>
                     <button class="nav-btn" onclick="filterCards('dz', this)">ДЗ</button>
                     <button class="nav-btn" onclick="filterCards('kr', this)">КР</button>
+                    <button class="nav-btn" onclick="filterCards('fav', this)"><i class="fa-solid fa-star"></i></button>
                 </div>
             </div>
         </div>
@@ -290,81 +403,94 @@
     <main>
         <div class="grid-container" id="cardsGrid">
             
-            <!-- Алгебра (ДЗ) -->
-            <a href="https://gdzonline.net/848-algebra-8-ister.html" target="_blank" class="card" data-category="dz" data-title="алгебра дз істер">
-                <span class="badge dz">ДЗ</span>
+            <a href="#" onclick="openSearchModal('algebra-ister', event)" class="card" data-id="algebra-dz" data-category="dz" data-title="алгебра дз істер пошук">
+                <button class="fav-btn" onclick="toggleFavorite(event, 'algebra-dz')"><i class="fa-regular fa-star"></i></button>
+                <div class="badges-container">
+                    <span class="badge dz">ДЗ</span>
+                    <span class="badge search-badge">ПОШУК</span>
+                </div>
                 <i class="fa-solid fa-calculator"></i>
                 <h2>Алгебра (ДЗ)</h2>
                 <p>Істер 8 клас</p>
             </a>
 
-            <!-- Геометрія (ДЗ) -->
-            <a href="https://gdzonline.net/647-geomeriya-8-klas-ister.html" target="_blank" class="card" data-category="dz" data-title="геометрія дз істер">
-                <span class="badge dz">ДЗ</span>
+            <a href="#" onclick="openSearchModal('geometry-ister', event)" class="card" data-id="geometry-dz" data-category="dz" data-title="геометрія дз істер пошук">
+                <button class="fav-btn" onclick="toggleFavorite(event, 'geometry-dz')"><i class="fa-regular fa-star"></i></button>
+                <div class="badges-container">
+                    <span class="badge dz">ДЗ</span>
+                    <span class="badge search-badge">ПОШУК</span>
+                </div>
                 <i class="fa-solid fa-shapes"></i>
                 <h2>Геометрія (ДЗ)</h2>
                 <p>Істер 8 клас</p>
             </a>
 
-            <!-- Алгебра (КР) -->
-            <a href="https://gdzister.in.ua/s-ta-dr-z-alhebry" target="_blank" class="card" data-category="kr" data-title="алгебра кр самостійні">
-                <span class="badge kr">КР</span>
-                <i class="fa-solid fa-square-root-variable"></i>
-                <h2>Алгебра (КР)</h2>
-                <p>Самостійні та контрольні</p>
-            </a>
-
-            <!-- Геометрія (КР) -->
-            <a href="https://gdzister.in.ua/s-ta-dr-z-heometriji" target="_blank" class="card" data-category="kr" data-title="геометрія кр самостійні">
-                <span class="badge kr">КР</span>
-                <i class="fa-solid fa-draw-polygon"></i>
-                <h2>Геометрія (КР)</h2>
-                <p>Самостійні та контрольні</p>
-            </a>
-
-            <!-- Фізика (ДЗ) -->
-            <a href="https://gdzonline.net/652-baryahtar-fizyka-8-klas.html" target="_blank" class="card" data-category="dz" data-title="фізика дз бар'яхтар">
-                <span class="badge dz">ДЗ</span>
-                <i class="fa-solid fa-atom"></i>
-                <h2>Фізика (ДЗ)</h2>
-                <p>Бар'яхтар 8 клас</p>
-            </a>
-
-            <!-- Хімія (ДЗ) -->
-            <a href="https://gdzonline.net/654-himiya-grygorovych-8-klas.html" target="_blank" class="card" data-category="dz" data-title="хімія дз григорович">
-                <span class="badge dz">ДЗ</span>
-                <i class="fa-solid fa-flask"></i>
-                <h2>Хімія (ДЗ)</h2>
-                <p>Григорович 8 клас</p>
-            </a>
-
-            <!-- Укр. мова (ДЗ) -->
-            <a href="https://gdzonline.net/651-ukrainska-mova-8-klas-zabolotnyy.html" target="_blank" class="card" data-category="dz" data-title="українська мова дз заболотний">
-                <span class="badge dz">ДЗ</span>
+            <a href="#" onclick="openSearchModal('ukr-mova-zabolotnyi', event)" class="card" data-id="ukrmova-dz" data-category="dz" data-title="українська мова дз заболотний пошук">
+                <button class="fav-btn" onclick="toggleFavorite(event, 'ukrmova-dz')"><i class="fa-regular fa-star"></i></button>
+                <div class="badges-container">
+                    <span class="badge dz">ДЗ</span>
+                    <span class="badge search-badge">ПОШУК</span>
+                </div>
                 <i class="fa-solid fa-book-bookmark"></i>
                 <h2>Укр. мова (ДЗ)</h2>
                 <p>Заболотний 8 клас</p>
             </a>
 
-            <!-- Укр. літ (ДЗ) -->
-            <a href="https://gdzonline.net/906-ukrlit-8-klas-avramenko.html" target="_blank" class="card" data-category="dz" data-title="українська література дз авраменко">
-                <span class="badge dz">ДЗ</span>
+            <a href="#" onclick="openSearchModal('chemistry-grygorovych', event)" class="card" data-id="chemistry-dz" data-category="dz" data-title="хімія дз григорович пошук">
+                <button class="fav-btn" onclick="toggleFavorite(event, 'chemistry-dz')"><i class="fa-regular fa-star"></i></button>
+                <div class="badges-container">
+                    <span class="badge dz">ДЗ</span>
+                    <span class="badge search-badge">ПОШУК</span>
+                </div>
+                <i class="fa-solid fa-flask"></i>
+                <h2>Хімія (ДЗ)</h2>
+                <p>Григорович 8 клас</p>
+            </a>
+
+            <!-- Звичайні картки... -->
+            <a href="https://gdzister.in.ua/s-ta-dr-z-alhebry" target="_blank" class="card" data-id="algebra-kr" data-category="kr" data-title="алгебра кр самостійні">
+                <button class="fav-btn" onclick="toggleFavorite(event, 'algebra-kr')"><i class="fa-regular fa-star"></i></button>
+                <div class="badges-container"><span class="badge kr">КР</span></div>
+                <i class="fa-solid fa-square-root-variable"></i>
+                <h2>Алгебра (КР)</h2>
+                <p>Самостійні та контрольні</p>
+            </a>
+
+            <a href="https://gdzister.in.ua/s-ta-dr-z-heometriji" target="_blank" class="card" data-id="geometry-kr" data-category="kr" data-title="геометрія кр самостійні">
+                <button class="fav-btn" onclick="toggleFavorite(event, 'geometry-kr')"><i class="fa-regular fa-star"></i></button>
+                <div class="badges-container"><span class="badge kr">КР</span></div>
+                <i class="fa-solid fa-draw-polygon"></i>
+                <h2>Геометрія (КР)</h2>
+                <p>Самостійні та контрольні</p>
+            </a>
+
+            <a href="https://gdzonline.net/652-baryahtar-fizyka-8-klas.html" target="_blank" class="card" data-id="physics-dz" data-category="dz" data-title="фізика дз бар'яхтар">
+                <button class="fav-btn" onclick="toggleFavorite(event, 'physics-dz')"><i class="fa-regular fa-star"></i></button>
+                <div class="badges-container"><span class="badge dz">ДЗ</span></div>
+                <i class="fa-solid fa-atom"></i>
+                <h2>Фізика (ДЗ)</h2>
+                <p>Бар'яхтар 8 клас</p>
+            </a>
+
+            <a href="https://gdzonline.net/906-ukrlit-8-klas-avramenko.html" target="_blank" class="card" data-id="ukrlit-dz" data-category="dz" data-title="українська література дз авраменко">
+                <button class="fav-btn" onclick="toggleFavorite(event, 'ukrlit-dz')"><i class="fa-regular fa-star"></i></button>
+                <div class="badges-container"><span class="badge dz">ДЗ</span></div>
                 <i class="fa-solid fa-book-open"></i>
                 <h2>Укр. літ (ДЗ)</h2>
                 <p>Авраменко 8 клас</p>
             </a>
 
-            <!-- Англ. мова (Зошит) (ДЗ) -->
-            <a href="https://gdzonline.net/902-english-8-jones-workbook.html" target="_blank" class="card" data-category="dz" data-title="англійська мова зошит workbook jones">
-                <span class="badge dz">ДЗ</span>
+            <a href="https://gdzonline.net/902-english-8-jones-workbook.html" target="_blank" class="card" data-id="english-workbook-dz" data-category="dz" data-title="англійська мова зошит workbook jones">
+                <button class="fav-btn" onclick="toggleFavorite(event, 'english-workbook-dz')"><i class="fa-regular fa-star"></i></button>
+                <div class="badges-container"><span class="badge dz">ДЗ</span></div>
                 <i class="fa-solid fa-book"></i>
                 <h2>Англ. мова (Зошит)</h2>
                 <p>Workbook (Jones)</p>
             </a>
 
-            <!-- Англ. мова (Книжка) (ДЗ) -->
-            <a href="https://gdzonline.net/901-english-8-styring.html" target="_blank" class="card" data-category="dz" data-title="англійська мова книжка підручник styring">
-                <span class="badge dz">ДЗ</span>
+            <a href="https://gdzonline.net/901-english-8-styring.html" target="_blank" class="card" data-id="english-book-dz" data-category="dz" data-title="англійська мова книжка підручник styring">
+                <button class="fav-btn" onclick="toggleFavorite(event, 'english-book-dz')"><i class="fa-regular fa-star"></i></button>
+                <div class="badges-container"><span class="badge dz">ДЗ</span></div>
                 <i class="fa-solid fa-globe"></i>
                 <h2>Англ. мова (Книжка)</h2>
                 <p>Підручник (Styring)</p>
@@ -374,66 +500,434 @@
     </main>
 
     <footer>
-        <p>Училка.нет &copy; 2026 | Створив: Бондарчук Кирило 8-Б</p>
-        <p>Збирать яйця, курочок, вчить пушкіна онлайн смс без регістрації</p>
+        <p>© 2026 Училка.нет — швидкий пошук готових домашніх завдань для 8 класу.</p>
+        <p>Матеріали призначені для самоперевірки та допомоги в навчанні. Використовуйте відповідально 🎓</p>
     </footer>
 
-    <script>
-        // --- Логіка теми (Темна за замовчуванням) ---
-        const htmlTag = document.documentElement;
-        const themeIcon = document.getElementById('themeIcon');
+    <div id="updateModal" class="modal-overlay">
+        <div class="modal">
+            <h2><b>Оновлення 1.1</b> 19.09.2026</h2>
+            <p class="desc">Додано нову бета-функцію <span class="badge search-badge" style="position:static;">ПОШУК ПО НОМЕРУ</span></p>
+            <p class="desc" style="text-align: left;">
+                ✅ Тепер ви можете знайти відповідь на завдання, лише ввести номер!<br>
+                ✅ Підтримує Алгебру, Геометрію, Укр. Мову та Хімію.<br>
+                ✅ Відповідь відкривається <b>прямо тут</b> у вигляді картинки, без зайвих завантажень!
+            </p>
+            <p class="desc">Додано нову функцію <b>ОБРАНЕ</b></p>
+            <p class="desc" style="text-align: left;">
+                ✅ Тепер на картках предметів є нова кнопка<br>
+                ✅ Натиснувши на її, предмет додається у новий розділ "Обране"
+            </p>
+            <button class="nav-btn active" style="width: 100%; margin-top: 10px;" onclick="closeUpdateModal()">Круто, погнали!</button>
+        </div>
+    </div>
 
-        function applyTheme(theme) {
-            htmlTag.setAttribute('data-theme', theme);
-            localStorage.setItem('theme', theme);
-            if (theme === 'dark') {
-                themeIcon.className = 'fa-solid fa-sun';
+    <!-- Модальне вікно пошуку -->
+    <div id="searchModal" class="modal-overlay" onclick="closeOnBg(event, 'searchModal')">
+        <div class="modal" id="searchModalContent">
+            <h2>Введіть номер завдання</h2>
+            
+            <input type="text" id="taskNumber" class="search-box" style="width: 100%; margin-bottom: 5px; text-align: center; font-size: 1.2rem; font-weight: bold;" placeholder="№" onkeypress="handleEnter(event)" inputmode="text" autocomplete="off">
+            <p id="searchError"></p>
+
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button class="nav-btn active" style="flex: 1;" onclick="prepareSearch()">Відкрити</button>
+                <button class="nav-btn" style="flex: 1;" onclick="closeModal('searchModal')">Скасувати</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальне вікно перегляду картинки (Viewer на весь екран) -->
+    <div id="viewerModal" class="modal-overlay">
+        <div class="modal modal-viewer">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h2 style="margin: 0; font-size: 1.1rem; color: var(--primary-color);">Відповідь</h2>
+                <button class="nav-btn" style="padding: 6px 12px;" onclick="closeViewer()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="image-container" id="imgContainer" onclick="if(event.target.id==='imgContainer') closeViewer()">
+                <i id="imageLoader" class="fa-solid fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--primary-color);"></i>
+                <img id="resultImage" alt="ГДЗ Картинка">
+                <p id="viewerError" style="display: none; color: #ef4444; font-weight: 600;">Упс! Картинку не знайдено.</p>
+                <div class="zoom-controls" id="zoomControls" style="display:none;">
+                    <button type="button" onclick="zoomBy(-0.5)" aria-label="Зменшити"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+                    <button type="button" onclick="resetZoom()" aria-label="Скинути масштаб"><i class="fa-solid fa-arrows-rotate"></i></button>
+                    <button type="button" onclick="zoomBy(0.5)" aria-label="Збільшити"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ---------- Безпечна робота з localStorage (працює навіть у приватному режимі Safari) ----------
+        function safeGet(key) {
+            try { return localStorage.getItem(key); } catch (e) { return null; }
+        }
+        function safeSet(key, value) {
+            try { localStorage.setItem(key, value); } catch (e) { /* сховище недоступне — просто ігноруємо */ }
+        }
+
+        // ---------- Тост-повідомлення ----------
+        let toastTimeout = null;
+        function showToast(text) {
+            let toast = document.getElementById('toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'toast';
+                toast.className = 'toast';
+                document.body.appendChild(toast);
+            }
+            toast.textContent = text;
+            toast.classList.add('show');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => toast.classList.remove('show'), 1800);
+        }
+
+        // 1. Система випадкових цитат при завантаженні
+        document.addEventListener('DOMContentLoaded', () => {
+            const quotes = [
+                "Не спались!",
+                "В тебе буде 12 балів!",
+                "Знову нічого не вчив?!",
+                "Відмінник не дав списати?",
+                "Спішу на допомогу...",
+                "Радий допомогти!"
+            ];
+            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            document.getElementById('headerQuote').innerText = randomQuote;
+        });
+
+        // Попап оновлення
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!safeGet('beta_search_v2_shown')) {
+                document.getElementById('updateModal').style.display = 'flex';
+            }
+        });
+
+        function closeUpdateModal() {
+            document.getElementById('updateModal').style.display = 'none';
+            safeSet('beta_search_v2_shown', 'true');
+        }
+
+        // 2. Утиліти модальних вікон
+        function getOpenModals() {
+            return Array.from(document.querySelectorAll('.modal-overlay')).filter(m => m.style.display === 'flex');
+        }
+
+        function closeOnBg(event, modalId) {
+            if (event.target.id === modalId) closeModal(modalId);
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function closeViewer() {
+            closeModal('viewerModal');
+            resetZoom();
+        }
+
+        // Закриття верхнього модального вікна по Esc — раніше не працювало для жодного вікна
+        document.addEventListener('keydown', (e) => {
+            if (e.key !== 'Escape') return;
+            const open = getOpenModals();
+            if (!open.length) return;
+            const last = open[open.length - 1];
+            if (last.id === 'viewerModal') closeViewer();
+            else closeModal(last.id);
+        });
+
+        // 3. Обране (нова функція)
+        const FAV_KEY = 'favorite_subjects';
+        function getFavorites() {
+            try { return JSON.parse(safeGet(FAV_KEY) || '[]'); } catch (e) { return []; }
+        }
+
+        function toggleFavorite(event, id) {
+            event.preventDefault();
+            event.stopPropagation();
+            let favs = getFavorites();
+            const btn = event.currentTarget;
+            const icon = btn.querySelector('i');
+
+            if (favs.includes(id)) {
+                favs = favs.filter(f => f !== id);
+                btn.classList.remove('active');
+                if (icon) { icon.classList.remove('fa-solid'); icon.classList.add('fa-regular'); }
+                showToast('Видалено з обраного');
             } else {
-                themeIcon.className = 'fa-solid fa-moon';
+                favs.push(id);
+                btn.classList.add('active');
+                if (icon) { icon.classList.remove('fa-regular'); icon.classList.add('fa-solid'); }
+                showToast('Додано в обране ⭐');
+            }
+
+            safeSet(FAV_KEY, JSON.stringify(favs));
+            if (currentFilter === 'fav') applyFilters();
+        }
+
+        function initFavorites() {
+            const favs = getFavorites();
+            document.querySelectorAll('.fav-btn').forEach(btn => {
+                const card = btn.closest('.card');
+                const id = card ? card.getAttribute('data-id') : null;
+                if (id && favs.includes(id)) {
+                    btn.classList.add('active');
+                    const icon = btn.querySelector('i');
+                    if (icon) { icon.classList.remove('fa-regular'); icon.classList.add('fa-solid'); }
+                }
+            });
+        }
+        document.addEventListener('DOMContentLoaded', initFavorites);
+
+        // 4. Фільтрація
+        let currentFilter = 'all';
+        function filterCards(category, btnElement) {
+            currentFilter = category;
+            const buttons = document.querySelectorAll('.nav-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            if (btnElement) btnElement.classList.add('active');
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const input = document.getElementById('searchInput').value.trim().toLowerCase();
+            const cards = document.querySelectorAll('.card');
+            const favs = getFavorites();
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const titleData = card.getAttribute('data-title') || '';
+                const category = card.getAttribute('data-category');
+                const id = card.getAttribute('data-id');
+                const matchesSearch = titleData.includes(input);
+                const matchesCategory = currentFilter === 'all'
+                    ? true
+                    : currentFilter === 'fav'
+                        ? favs.includes(id)
+                        : category === currentFilter;
+                const show = matchesSearch && matchesCategory;
+                card.style.display = show ? 'flex' : 'none';
+                if (show) visibleCount++;
+            });
+
+            toggleEmptyState(visibleCount === 0);
+        }
+
+        // Раніше при порожньому результаті пошуку користувач бачив просто порожню сторінку
+        function toggleEmptyState(show) {
+            const grid = document.getElementById('cardsGrid');
+            let empty = document.getElementById('emptyState');
+            if (show) {
+                if (!empty) {
+                    empty = document.createElement('div');
+                    empty.id = 'emptyState';
+                    empty.className = 'empty-state';
+                    empty.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i>Нічого не знайдено. Спробуйте інший запит або фільтр.';
+                    grid.appendChild(empty);
+                }
+            } else if (empty) {
+                empty.remove();
             }
         }
 
-        // Завантаження теми зі сховища або dark за замовчуванням
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        applyTheme(savedTheme);
+        // 5. Пошук за номером завдання
+        let currentSearchSubject = '';
 
-        function toggleTheme() {
-            const currentTheme = htmlTag.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            applyTheme(newTheme);
+        function openSearchModal(subjectId, event) {
+            event.preventDefault();
+            currentSearchSubject = subjectId;
+            const input = document.getElementById('taskNumber');
+            input.value = '';
+            document.getElementById('searchError').style.display = 'none';
+            document.getElementById('searchModal').style.display = 'flex';
+
+            setTimeout(() => input.focus(), 100);
         }
 
-        // --- Фільтрація ДЗ / КР ---
-        function filterCards(category, btnElement) {
-            const cards = document.querySelectorAll('.card');
-            const buttons = document.querySelectorAll('.nav-btn');
-
-            buttons.forEach(btn => btn.classList.remove('active'));
-            btnElement.classList.add('active');
-
-            cards.forEach(card => {
-                const cardCategory = card.getAttribute('data-category');
-                if (category === 'all' || cardCategory === category) {
-                    card.style.display = 'flex';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
+        function handleEnter(event) {
+            if (event.key === 'Enter') prepareSearch();
         }
 
-        // --- Швидкий пошук ---
-        function searchCards() {
-            const input = document.getElementById('searchInput').value.toLowerCase();
-            const cards = document.querySelectorAll('.card');
+        function showSearchError(message) {
+            const errorEl = document.getElementById('searchError');
+            errorEl.innerText = message;
+            errorEl.style.display = 'block';
+        }
 
-            cards.forEach(card => {
-                const titleData = card.getAttribute('data-title');
-                if (titleData.includes(input)) {
-                    card.style.display = 'flex';
-                } else {
-                    card.style.display = 'none';
+        function prepareSearch() {
+            const rawInput = document.getElementById('taskNumber').value.trim();
+            document.getElementById('searchError').style.display = 'none';
+
+            if (!rawInput) {
+                showSearchError('Будь ласка, введіть номер!');
+                return;
+            }
+
+            const input = rawInput.replace(/[, \-]/g, '.');
+
+            // Раніше сюди можна було передати будь-який текст, який ламав посилання на картинку
+            if (!/^\d+(\.\d+)*$/.test(input)) {
+                showSearchError('Невірний формат. Приклад: 12 або 12.3');
+                return;
+            }
+
+            const subjectFolders = {
+                'algebra-ister': 'gdz-algebra-ister',
+                'ukr-mova-zabolotnyi': 'gdz-ukr-mova-zabolotnyi',
+                'geometry-ister': 'gdz-geometry-ister',
+                'chemistry-grygorovych': 'gdz-himiya-grygorovych'
+            };
+
+            const folder = subjectFolders[currentSearchSubject];
+            if (!folder) {
+                showSearchError('Цей предмет ще не підтримується пошуком.');
+                return;
+            }
+
+            const baseUrl = `https://halyavka.net/images/8-klas/${folder}/`;
+            const safeInput = encodeURIComponent(input);
+            const finalImageUrl = (currentSearchSubject === 'algebra-ister' && /^\d+$/.test(input) && parseInt(input, 10) <= 80)
+                ? `${baseUrl}povt-7klas/${safeInput}.webp`
+                : `${baseUrl}${safeInput}.webp`;
+
+            openViewer(finalImageUrl);
+        }
+
+        // 6. В'ювер із завантаженням
+        function openViewer(imageUrl) {
+            closeModal('searchModal');
+            resetZoom();
+
+            const viewerModal = document.getElementById('viewerModal');
+            const img = document.getElementById('resultImage');
+            const loader = document.getElementById('imageLoader');
+            const errorText = document.getElementById('viewerError');
+            const zoomControls = document.getElementById('zoomControls');
+
+            viewerModal.style.display = 'flex';
+            img.style.display = 'none';
+            errorText.style.display = 'none';
+            zoomControls.style.display = 'none';
+            loader.style.display = 'block';
+
+            img.onload = () => { loader.style.display = 'none'; img.style.display = 'block'; zoomControls.style.display = 'flex'; };
+            img.onerror = () => { loader.style.display = 'none'; errorText.style.display = 'block'; };
+            img.src = imageUrl;
+        }
+
+        // 7. Зум і панорамування (сенсорні жести)
+        const imgContainer = document.getElementById('imgContainer');
+        const zoomImg = document.getElementById('resultImage');
+
+        let scale = 1, panning = false, pointX = 0, pointY = 0;
+        let start = { x: 0, y: 0 }, startDist = 0, initialScale = 1;
+        let lastTapTime = 0;
+        const MAX_SCALE = 4;
+
+        // Раніше зображення можна було "затягнути" за межі екрана — тепер рух обмежений
+        function clampPan() {
+            if (scale <= 1) { pointX = 0; pointY = 0; return; }
+            const rect = imgContainer.getBoundingClientRect();
+            const maxX = (rect.width * (scale - 1)) / 2;
+            const maxY = (rect.height * (scale - 1)) / 2;
+            pointX = Math.max(-maxX, Math.min(maxX, pointX));
+            pointY = Math.max(-maxY, Math.min(maxY, pointY));
+        }
+
+        function applyTransform() {
+            zoomImg.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`;
+        }
+
+        imgContainer.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                // Два пальці — готуємося масштабувати
+                startDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+                initialScale = scale;
+                panning = false;
+            } else if (e.touches.length === 1) {
+                const now = Date.now();
+                if (now - lastTapTime < 300) {
+                    // Подвійний тап — перемикаємо зум (нова можливість)
+                    if (scale > 1) { resetZoom(); } else { scale = 2; clampPan(); applyTransform(); }
+                    lastTapTime = 0;
+                    return;
                 }
-            });
+                lastTapTime = now;
+                if (scale > 1) {
+                    start = { x: e.touches[0].clientX - pointX, y: e.touches[0].clientY - pointY };
+                    panning = true;
+                }
+            }
+        }, { passive: false });
+
+        imgContainer.addEventListener('touchmove', (e) => {
+            e.preventDefault(); // Забороняємо нативний скрол і зум браузера
+
+            if (e.touches.length === 2) {
+                const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+                scale = Math.max(1, Math.min(initialScale * (dist / startDist), MAX_SCALE));
+            } else if (e.touches.length === 1) {
+                // Виправлено: якщо один палець підняли після щипка, картинка більше не "стрибає"
+                if (!panning && scale > 1) {
+                    start = { x: e.touches[0].clientX - pointX, y: e.touches[0].clientY - pointY };
+                    panning = true;
+                }
+                if (panning && scale > 1) {
+                    pointX = e.touches[0].clientX - start.x;
+                    pointY = e.touches[0].clientY - start.y;
+                }
+            }
+            clampPan();
+            applyTransform();
+        }, { passive: false });
+
+        imgContainer.addEventListener('touchend', (e) => {
+            if (e.touches.length < 2) initialScale = scale;
+            if (e.touches.length === 0) panning = false;
+
+            if (scale <= 1) {
+                resetZoom();
+            } else {
+                clampPan();
+                applyTransform();
+            }
+        });
+
+        // 8. Зум для десктопу — раніше на комп'ютері наблизити картинку було неможливо
+        imgContainer.addEventListener('wheel', (e) => {
+            if (zoomImg.style.display === 'none') return;
+            e.preventDefault();
+            const delta = e.deltaY < 0 ? 0.25 : -0.25;
+            scale = Math.max(1, Math.min(scale + delta, MAX_SCALE));
+            clampPan();
+            applyTransform();
+        }, { passive: false });
+
+        let mouseDragging = false;
+        zoomImg.addEventListener('mousedown', (e) => {
+            if (scale <= 1) return;
+            mouseDragging = true;
+            start = { x: e.clientX - pointX, y: e.clientY - pointY };
+        });
+        window.addEventListener('mousemove', (e) => {
+            if (!mouseDragging) return;
+            pointX = e.clientX - start.x;
+            pointY = e.clientY - start.y;
+            clampPan();
+            applyTransform();
+        });
+        window.addEventListener('mouseup', () => { mouseDragging = false; });
+
+        function zoomBy(delta) {
+            scale = Math.max(1, Math.min(scale + delta, MAX_SCALE));
+            clampPan();
+            applyTransform();
+        }
+
+        function resetZoom() {
+            scale = 1; pointX = 0; pointY = 0; initialScale = 1; panning = false;
+            if (zoomImg) applyTransform();
         }
     </script>
 </body>
